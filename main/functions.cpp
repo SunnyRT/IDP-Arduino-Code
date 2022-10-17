@@ -38,60 +38,72 @@ void sensor_read(){
     us2_distance = us_measure(us2T_pn, us2E_pn); 
 };
 
-void line_follow();
+void line_follow() {
+    // copy content in line_follow_v2.ino here
+    flag_line = "on";
+};
+
+
+
+
+
+
+
+
+
+
 void move_forward()
 {
-    flag_foward = true;
-    flag_Lturn = false;
-    flag_Rturn = false;
-    flag_stop = false;
-    Rwheel->run(FORWARD);
-    Rwheel->setSpeed(150);
-    Lwheel->run(FORWARD);
-    Lwheel->setSpeed(150);
+  flag_nav = "F";
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(motor_speed);
 }
 
 void adjust_left()
 {
-    flag_foward = false;
-    flag_Lturn = true;
-    flag_Rturn = false;
-    flag_stop = false;
-    Rwheel->run(FORWARD);
-    Rwheel->setSpeed(150);
-    Lwheel->run(BACKWARD);
-    Lwheel->setSpeed(150);
+  flag_nav = "L";
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(BACKWARD);
+  Lwheel->setSpeed(motor_speed);
 }
 
 void adjust_right()
 {
-    flag_foward = false;
-    flag_Lturn = false;
-    flag_Rturn = true;
-    flag_stop = false;
-    Rwheel->run(BACKWARD);
-    Rwheel->setSpeed(150);
-    Lwheel->run(FORWARD);
-    Lwheel->setSpeed(150);
+  flag_nav = "R";
+  Rwheel->run(BACKWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(motor_speed);
 }
 
 void stop_move()
 {
-    Rwheel->run(RELEASE);
-    Rwheel->setSpeed(0);
-    Lwheel->run(RELEASE);
-    Lwheel->setSpeed(0);
-    flag_foward = false;
-    flag_Lturn = false;
-    flag_Rturn = false;
-    flag_stop = true;
+  flag_nav = "P";
+  Rwheel->run(RELEASE);
+  Rwheel->setSpeed(0);
+  Lwheel->run(RELEASE);
+  Lwheel->setSpeed(0);
 }
+
 
 void turn_90left(){
     Rwheel->run(FORWARD);
-    Rwheel->setSpped
+    Rwheel->setSpeed(motor_speed);
+    Lwheel->run(RELEASE);
+    Lwheel->setSpeed(0);
+    delay(duration_steer);
 };
-void turn_90right();
+
+void turn_90right() {
+    Rwheel->run(RELEASE);
+    Rwheel->setSpeed(0);
+    Lwheel->run(FORWARD);
+    Lwheel->setSpeed(motor_speed0);
+    delay(duration_steer);
+}
 
 // side == 0;
 void start_route();

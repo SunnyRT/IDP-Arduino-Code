@@ -16,7 +16,7 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 
 int l0, l1, l2;
 
-char flag_nav_line = "P";
+char flag_nav = "P";
 // indicate whether the robot is moving forward / adjust left / adjust right / stop
 //  initialize flag_linestate to be "P": stop
 //"P": stop
@@ -50,7 +50,7 @@ void loop()
   Serial.println(l2);
 
   Serial.print("Flag States: ");
-  Serial.println(flag_nav_line);
+  Serial.println(flag_nav);
 
   // l2 detects the line --> junctions (cross or T)
   if (l2 == LOW)
@@ -62,14 +62,14 @@ void loop()
     }
     
     // all 3 light sensors detect the line --> cross junction
-    else if ((l0 == LOW && l1 == LOW) && flag_nav_line != "P") {
+    else if ((l0 == LOW && l1 == LOW) && flag_nav != "P") {
       Serial.println("Cross junction detected!")
       stop_move();
       //call relevant functions
     }
 
     // only the 2 right sensors detetc the line --> T junction
-    else if ((l0 ==HIGH && l1 == LOW) && flag_nav_line != "P") {
+    else if ((l0 ==HIGH && l1 == LOW) && flag_nav != "P") {
       Serial.println("T junction detected!")
       stop_move();
       //call relevant functions
@@ -84,7 +84,7 @@ void loop()
   else
   {
     // neither l0 or l1 detects the line
-    if ((l0 == HIGH && l1 == HIGH) &&flag_nav_line != "F")
+    if ((l0 == HIGH && l1 == HIGH) &&flag_nav != "F")
     {
       // forward
       move_forward();
@@ -92,21 +92,21 @@ void loop()
     }
 
     // l0 detects the line
-    else if ((l0 == LOW && l1 == HIGH) &&flag_nav_line != "L")
+    else if ((l0 == LOW && l1 == HIGH) &&flag_nav != "L")
     {
       // adjust left slightly
       adjust_left();
     }
 
     // l1 detects the line
-    else if ((l0 == HIGH && l1 == LOW) &&flag_nav_line != "R")
+    else if ((l0 == HIGH && l1 == LOW) &&flag_nav != "R")
     {
       // adjust right slightly
       adjust_right();
     }
 
     // l0 and l1 both detect the line
-    else if ((l0 == LOW && l1 == LOW) &&flag_nav_line != "P")
+    else if ((l0 == LOW && l1 == LOW) &&flag_nav != "P")
     {
       stop_move();
     }
@@ -116,7 +116,7 @@ void loop()
 // functions
 void move_forward()
 {
-  flag_nav_line = "F";
+  flag_nav = "F";
   Rwheel->run(FORWARD);
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(FORWARD);
@@ -125,7 +125,7 @@ void move_forward()
 
 void adjust_left()
 {
-  flag_nav_line = "L";
+  flag_nav = "L";
   Rwheel->run(FORWARD);
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(BACKWARD);
@@ -134,7 +134,7 @@ void adjust_left()
 
 void adjust_right()
 {
-  flag_nav_line = "R";
+  flag_nav = "R";
   Rwheel->run(BACKWARD);
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(FORWARD);
@@ -143,7 +143,7 @@ void adjust_right()
 
 void stop_move()
 {
-  flag_nav_line = "P";
+  flag_nav = "P";
   Rwheel->run(RELEASE);
   Rwheel->setSpeed(0);
   Lwheel->run(RELEASE);
