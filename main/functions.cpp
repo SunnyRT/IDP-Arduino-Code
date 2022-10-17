@@ -12,6 +12,7 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 
 // global
 
+// calculate distance from ultrasonic sensors
 float us_measure(trig_pin, echo_pin){
     // generate 10-microsecond pulse to TRIG pin
     digitalWrite(trig_pin, HIGH);
@@ -23,6 +24,7 @@ float us_measure(trig_pin, echo_pin){
     return duration_us * 0.017;
 }
 
+// collects sensor readings (will be run every loop)
 void sensor_read(){
   // light/line sensors:
     ldr = analogRead(ldr_pn);
@@ -37,6 +39,17 @@ void sensor_read(){
     us1_distance = us_measure(us1T_pn, us1E_pn);
     us2_distance = us_measure(us2T_pn, us2E_pn); 
 };
+
+// moving average function
+void update_avg(avg_array, avg_value){
+    float sum_vals=0;
+    for(int i=0; i<10; i++){ // 10 = array length
+        sum_vals += avg_array[i]
+    }
+    avg_value = sum_vals / 10; //10=array length
+    return avg_value
+}
+
 
 void line_follow();
 void move_forward()
