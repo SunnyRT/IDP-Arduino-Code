@@ -3,10 +3,10 @@
 
 // Pins Set-up:
 //Analog:
-const int ldr_pn = 0;
-const int hall_pn = 1;
-const int ir1_pn = 4; // short range
-const int ir2_pn = 5; // long range
+const int ldr_pn = A0;
+const int hall_pn = A1;
+const int ir1_pn = A4; // short range
+const int ir2_pn = A5; // long range
 //Digital:
 const int push_pn=1; //ideally not use pin 1 (move to 5?)
 const int l0_pn=2; //left
@@ -25,7 +25,25 @@ const int us2T_pn=13;
 // Sensor Values
 int ldr, l0, l1, l2, l3, ir1, ir2, hall;
 float us1_distance, us2_distance;
+int motor_speed = 250;
+int duration_steer; // require testing to determine value
+int count = 0;
 
+// flags
+bool flag_onoff;
+bool flag_started;
+char flag_line;
+  //"on"
+  //"off"
+  //"tunnel"
+  //"steer"
+
+char flag_nav; 
+  //"P": stop
+  //"L": adjust left
+  //"R": adjust right
+  //"B": backwards
+  //"F": forwards
 
 
 
