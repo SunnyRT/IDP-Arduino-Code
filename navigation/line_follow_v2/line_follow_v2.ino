@@ -10,8 +10,8 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);  //LEFT
 
 /*defining pins and variables*/
 
-#define light0 2
-#define light1 3
+#define l0_pin 2 // left 
+#define l1_pin 3 // right
 
 
 int l0, l1;
@@ -20,19 +20,19 @@ bool flag_foward = false;
 bool flag_Lturn = false;
 bool flag_Rturn = false;
 bool flag_stop = true;
-
+int motor_speed = 250;
 
 void setup() {
-  pinMode(light0, INPUT); //light sensor on the left
-  pinMode(light1, INPUT); //light sensor on the right
+  pinMode(l0_pin, INPUT); //light sensor on the left
+  pinMode(l1_pin, INPUT); //light sensor on the right
   Serial.begin(9600);
   AFMS.begin(); //Connect to the controller
 }
 
 void loop() {
   //read and store light sensor values
-  l0 = digitalRead(light0);
-  l1 = digitalRead(light1);
+  l0 = digitalRead(l0_pin);
+  l1 = digitalRead(l1_pin);
 
   //print values of the light sensors to the serial monitor
   Serial.print("Sensor Readings: ");
@@ -82,9 +82,9 @@ void move_forward() {
     flag_Rturn = false;
     flag_stop = false;
   Rwheel->run(FORWARD);
-  Rwheel->setSpeed(200);
+  Rwheel->setSpeed(motor_speed);
   Lwheel->run(FORWARD);
-  Lwheel->setSpeed(200);
+  Lwheel->setSpeed(motor_speed);
 }
 
 void adjust_left() {
@@ -93,9 +93,9 @@ void adjust_left() {
     flag_Rturn = false;
     flag_stop = false;
   Rwheel->run(FORWARD);
-  Rwheel->setSpeed(150);
+  Rwheel->setSpeed(motor_speed);
   Lwheel->run(BACKWARD);
-  Lwheel->setSpeed(150);
+  Lwheel->setSpeed(motor_speed);
 }
 
 void adjust_right() {
@@ -104,9 +104,9 @@ void adjust_right() {
     flag_Rturn = true;
     flag_stop = false;
   Rwheel->run(BACKWARD);
-  Rwheel->setSpeed(150);
+  Rwheel->setSpeed(motor_speed);
   Lwheel->run(FORWARD);
-  Lwheel->setSpeed(150);
+  Lwheel->setSpeed(motor_speed);
 
 }
 

@@ -11,7 +11,9 @@ Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIHGT
 Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 
 // global
-void sersor_read(){
+
+  
+void sensor_read(){
   // light/line sensors:
     l0 = digitalRead(light0);
     l1 = digitalRead(light1);
@@ -26,9 +28,9 @@ void move_forward()
     flag_Rturn = false;
     flag_stop = false;
     Rwheel->run(FORWARD);
-    Rwheel->setSpeed(200);
+    Rwheel->setSpeed(150);
     Lwheel->run(FORWARD);
-    Lwheel->setSpeed(200);
+    Lwheel->setSpeed(150);
 }
 
 void adjust_left()
@@ -67,7 +69,10 @@ void stop_move()
     flag_stop = true;
 }
 
-void turn_90left();
+void turn_90left(){
+    Rwheel->run(FORWARD);
+    Rwheel->setSpped
+};
 void turn_90right();
 
 // side == 0;
@@ -93,3 +98,11 @@ void tunnel();
 void box_find();
 
 void box_delivery();
+
+
+
+
+// how to read from different sensors
+void IR_read(){
+
+}

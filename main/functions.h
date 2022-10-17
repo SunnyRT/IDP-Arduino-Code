@@ -4,13 +4,7 @@
 
 #include <Arduino.h>
 
-// declare variables
-bool l0; // light sensor left
-bool l1; // light sensor right
-bool flag_foward;
-bool flag_Lturn;
-bool flag_Rturn;
-bool flag_stop;
+
 
 // global
 void sensor_read();
