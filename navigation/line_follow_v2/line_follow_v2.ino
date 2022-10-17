@@ -16,10 +16,16 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);  //LEFT
 
 int l0, l1;
 
-bool flag_foward = false;
-bool flag_Lturn = false;
-bool flag_Rturn = false;
-bool flag_stop = true;
+char flag_nav_line = "P"; 
+//indicate whether the robot is moving forward / adjust left / adjust right / stop
+// initialize flag_linestate to be "P": stop
+//"P": stop
+//"L": adjust left
+//"R": adjust right
+//"B": backwards
+//"F": forwards
+
+
 int motor_speed = 250;
 
 void setup() {
@@ -46,7 +52,7 @@ void loop() {
   Serial.println(flag_Rturn);
 
   //neither l0 or l1 detects the line
-  if ((l0 == HIGH && l1 == HIGH) && flag_foward == false) {
+  if ((l0 == HIGH && l1 == HIGH) && flag_nav_line !== "F") {
     //forward
     move_forward();
     Serial.println("MOVE FORWARD!");
@@ -54,20 +60,20 @@ void loop() {
 
 
   //l0 detects the line
-  else if ((l0 == LOW && l1 == HIGH) && flag_Lturn == false) {
+  else if ((l0 == LOW && l1 == HIGH) && flag_nav_line !== "L") {
     //adjust left slightly
     adjust_left();
   }
 
 
   //l1 detects the line 
-  else if ((l0 == HIGH && l1 == LOW) && flag_Rturn == false) {
+  else if ((l0 == HIGH && l1 == LOW) && flag_nav_line !== "R") {
     //adjust right slightly
     adjust_right();
   }
 
   //l0 and l1 both detect the line
-  else {
+  else if ((l0 == LOW && l1 == LOW) && flag_nav_line !== "P")  {
     stop_move();
   }
 
@@ -77,10 +83,7 @@ void loop() {
 
 //functions
 void move_forward() {
-    flag_foward = true;
-    flag_Lturn = false;
-    flag_Rturn = false;
-    flag_stop = false;
+  flag_nav_line = "F";
   Rwheel->run(FORWARD);
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(FORWARD);
@@ -88,10 +91,7 @@ void move_forward() {
 }
 
 void adjust_left() {
-    flag_foward = false;
-    flag_Lturn = true;
-    flag_Rturn = false;
-    flag_stop = false;
+  flag_nav_line = "L";
   Rwheel->run(FORWARD);
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(BACKWARD);
@@ -99,10 +99,7 @@ void adjust_left() {
 }
 
 void adjust_right() {
-    flag_foward = false;
-    flag_Lturn = false;
-    flag_Rturn = true;
-    flag_stop = false;
+  flag_nav_line = "R";
   Rwheel->run(BACKWARD);
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(FORWARD);
@@ -111,12 +108,10 @@ void adjust_right() {
 }
 
 void stop_move() {
+  flag_nav_line = "P";
   Rwheel->run(RELEASE);
   Rwheel->setSpeed(0);
   Lwheel->run(RELEASE);
   Lwheel->setSpeed(0);
-  flag_foward = false;
-  flag_Lturn = false;
-  flag_Rturn = false;
-  flag_stop = true;
+
 }
