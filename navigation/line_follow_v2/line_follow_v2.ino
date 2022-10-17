@@ -11,23 +11,20 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);  //LEFT
 /*defining pins and variables*/
 
 #define light0 2
-//#define light1 3
-#define light2 4
+#define light1 3
 
 
-int l0, l2;
+int l0, l1;
 
-bool forward_flag = false;
-bool backward_flag = false;
-bool Lturn_flag = false;
-bool Rturn_flag = false;
-bool stop_flag = true;
+bool flag_foward = false;
+bool flag_Lturn = false;
+bool flag_Rturn = false;
+bool flag_stop = true;
 
 
 void setup() {
   pinMode(light0, INPUT); //light sensor on the left
-//  pinMode(light1, INPUT); //light sensor in the middle
-  pinMode(light2, INPUT); //light sensor on the right
+  pinMode(light1, INPUT); //light sensor on the right
   Serial.begin(9600);
   AFMS.begin(); //Connect to the controller
 }
@@ -35,56 +32,44 @@ void setup() {
 void loop() {
   //read and store light sensor values
   l0 = digitalRead(light0);
-//  l1 = digitalRead(light1);
-  l2 = digitalRead(light2);
+  l1 = digitalRead(light1);
 
   //print values of the light sensors to the serial monitor
   Serial.print("Sensor Readings: ");
   Serial.print(l0);
-//  Serial.print(l1);
-  Serial.println(l2);
+  Serial.println(l1);
 
 
   Serial.print("Flag States: ");
-  Serial.print(Lturn_flag);
-  Serial.print(forward_flag);
-  Serial.println(Rturn_flag);
+  Serial.print(flag_Lturn);
+  Serial.print(flag_foward);
+  Serial.println(flag_Rturn);
 
-  if ((l0 == HIGH && l2== HIGH) && forward_flag == false) {
+  //neither l0 or l1 detects the line
+  if ((l0 == HIGH && l1 == HIGH) && flag_foward == false) {
     //forward
-    forward_flag = true;
-    Lturn_flag = false;
-    Rturn_flag = false;
-    stop_flag = false;
     move_forward();
     Serial.println("MOVE FORWARD!");
   }
 
 
   //l0 detects the line
-  else if ((l0 == LOW && l2 == HIGH) && Lturn_flag == false) {
+  else if ((l0 == LOW && l1 == HIGH) && flag_Lturn == false) {
     //adjust left slightly
-    forward_flag = false;
-    Lturn_flag = true;
-    Rturn_flag = false;
-    stop_flag = false;
     adjust_left();
   }
 
 
-    //l2 detects the line 
-  else if ((l0 == HIGH && l2 == LOW) && Rturn_flag == false) {
+  //l1 detects the line 
+  else if ((l0 == HIGH && l1 == LOW) && flag_Rturn == false) {
     //adjust right slightly
-    forward_flag = false;
-    Lturn_flag = false;
-    Rturn_flag = true;
-    stop_flag = false;
     adjust_right();
-
   }
 
-  
-
+  //l0 and l1 both detect the line
+  else {
+    stop_move();
+  }
 
 
 }
@@ -92,20 +77,21 @@ void loop() {
 
 //functions
 void move_forward() {
+    flag_foward = true;
+    flag_Lturn = false;
+    flag_Rturn = false;
+    flag_stop = false;
   Rwheel->run(FORWARD);
   Rwheel->setSpeed(200);
   Lwheel->run(FORWARD);
   Lwheel->setSpeed(200);
 }
 
-void move_backward() {
-  Rwheel->run(BACKWARD);
-  Rwheel->setSpeed(100);
-  Lwheel->run(BACKWARD);
-  Lwheel->setSpeed(100);
-}
-
 void adjust_left() {
+    flag_foward = false;
+    flag_Lturn = true;
+    flag_Rturn = false;
+    flag_stop = false;
   Rwheel->run(FORWARD);
   Rwheel->setSpeed(150);
   Lwheel->run(BACKWARD);
@@ -113,6 +99,10 @@ void adjust_left() {
 }
 
 void adjust_right() {
+    flag_foward = false;
+    flag_Lturn = false;
+    flag_Rturn = true;
+    flag_stop = false;
   Rwheel->run(BACKWARD);
   Rwheel->setSpeed(150);
   Lwheel->run(FORWARD);
@@ -125,8 +115,8 @@ void stop_move() {
   Rwheel->setSpeed(0);
   Lwheel->run(RELEASE);
   Lwheel->setSpeed(0);
-  forward_flag = false;
-  Lturn_flag = false;
-  Rturn_flag = false;
-  stop_flag = true;
+  flag_foward = false;
+  flag_Lturn = false;
+  flag_Rturn = false;
+  flag_stop = true;
 }
