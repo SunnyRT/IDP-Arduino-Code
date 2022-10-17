@@ -12,8 +12,10 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 
 // global
 void sersor_read(){
+  // light/line sensors:
     l0 = digitalRead(light0);
     l1 = digitalRead(light1);
+    
 };
 
 void line_follow();
