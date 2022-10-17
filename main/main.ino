@@ -5,17 +5,16 @@
 //Analog:
 const int ldr_pn = 0;
 const int hall_pn = 1;
-const int ir1_pn = 4; // short 
-const int ir2_pn = 5;
+const int ir1_pn = 4; // short range
+const int ir2_pn = 5; // long range
 //Digital:
-
 const int push_pn=1; //ideally not use pin 1 (move to 5?)
 const int l0_pn=2; //left
 const int l1_pn=3; //right
 const int l2_pn=4; //far right (for juntion counting)
 const int l3_pn=5;
-const int us1E_pn=6;
-const int us1T_pn=7;
+const int us1E_pn=6; // yellow wire
+const int us1T_pn=7; // green wire
 const int ledG_pn=8;
 const int ledA_pn=9;
 const int ledR_pn=10;
@@ -23,8 +22,17 @@ const int servo1_pn=11;
 const int us2E_pn=12;
 const int us2T_pn=13;
 
+// Sensor Values
+int ldr, l0, l1, l2, l3, ir1, ir2, hall;
+float us1_distance, us2_distance;
+
+
+
+
+
 
 void setup(){
+  Serial.begin(9600);
   // set pins as inputs
   pinMode(ldr_pn, INPUT);
   pinMode(hall_pn, INPUT);
@@ -34,10 +42,18 @@ void setup(){
   pinMode(l1_pn, INPUT);
   pinMode(l2_pn, INPUT);
   pinMode(l3_pn, INPUT);
-  pinMode(ledR_pn, OUTPUT);
-  pinMode(ledA_pn, OUTPUT);
-  pinMode(ledG_pn, OUTPUT);
   pinMode(us1E_pn, INPUT);
+  pinMode(us1T_pn, OUTPUT);
+  pinMode(ledG_pn, OUTPUT);
+  pinMode(ledA_pn, OUTPUT);
+  pinMode(ledR_pn, OUTPUT);
+  pinMode(servo1_pn, OUTPUT);
+  pinMode(us2E_pn, INPUT);
+  pinMode(us2T_pn, OUTPUT);
+
+  
+
+ 
 
 
 }
