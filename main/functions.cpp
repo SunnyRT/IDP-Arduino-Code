@@ -12,12 +12,30 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 
 // global
 
-  
+float us_measure(trig_pin, echo_pin){
+    // generate 10-microsecond pulse to TRIG pin
+    digitalWrite(trig_pin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trig_pin, LOW);
+     // measure duration of pulse from ECHO pin
+    float duration_us = pulseIn(echo_pin, HIGH);
+    // return distance (*v_sound /2)
+    return duration_us * 0.017;
+}
+
 void sensor_read(){
   // light/line sensors:
-    l0 = digitalRead(light0);
-    l1 = digitalRead(light1);
-    
+    ldr = analogRead(ldr_pn);
+    hall = analogRead(hall_pn);
+    ir1 = analogRead(ir1_pn);
+    ir2 = analogRead(ir2_pn);
+    push = digitalRead(push_pn);
+    l0 = digitalRead(l0_pn);
+    l1 = digitalRead(l1_pn);
+    l2 = digitalRead(l2_pn);
+    l3 = digitalRead(l3_pn);
+    us1_distance = us_measure(us1T_pn, us1E_pn);
+    us2_distance = us_measure(us2T_pn, us2E_pn); 
 };
 
 void line_follow();
