@@ -32,11 +32,8 @@ int count = 0;
 // flags
 bool flag_onoff;
 bool flag_started;
-char flag_line;
-  //"on"
-  //"off"
-  //"tunnel"
-  //"steer"
+bool flag_line;
+
 
 char flag_nav; 
   //"P": stop
