@@ -10,7 +10,7 @@
 void sensor_read();
 void line_follow();
 void stop_move();
-void move_foward();
+void move_forward();
 void move_backward();
 void adjust_left();
 void adjust_right();
