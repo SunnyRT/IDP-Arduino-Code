@@ -10,47 +10,89 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_Motor
 Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIHGT
 Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 
-// global
-
-float us_measure(trig_pin, echo_pin){
-    // generate 10-microsecond pulse to TRIG pin
-    digitalWrite(trig_pin, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(trig_pin, LOW);
-     // measure duration of pulse from ECHO pin
-    float duration_us = pulseIn(echo_pin, HIGH);
-    // return distance (*v_sound /2)
-    return duration_us * 0.017;
+float us_measure(int trig_pin, int echo_pin)
+{
+  // generate 10-microsecond pulse to TRIG pin
+  digitalWrite(trig_pin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig_pin, LOW);
+  // measure duration of pulse from ECHO pin
+  float duration_us = pulseIn(echo_pin, HIGH);
+  // return distance (*v_sound /2)
+  return duration_us * 0.017;
 }
 
-void sensor_read(){
+float moving_average(float new_reading)
+{
+
+  const int nvalues = 10;     // Moving average window size
+  static int current = 0;     // Index for current value
+  static int value_count = 0; // Count of values read (<= nvalues)
+  static float sum = 0;       // Rolling sum
+  static float values[nvalues];
+
+  sum += new_reading;
+
+  // If the window is full, adjust the sum by deleting the oldest value
+  if (cvalues == nvalues)
+    sum -= values[current];
+
+  values[current] = value; // Replace the oldest with the latest
+
+  if (++current >= nvalues)
+    current = 0;
+
+  if (cvalues < nvalues)
+    cvalues += 1;
+
+  return sum / cvalues;
+}
+
+void sensor_read()
+{
   // light/line sensors:
-    ldr = analogRead(ldr_pn);
-    hall = analogRead(hall_pn);
-    ir1 = analogRead(ir1_pn);
-    ir2 = analogRead(ir2_pn);
-    push = digitalRead(push_pn);
-    l0 = digitalRead(l0_pn);
-    l1 = digitalRead(l1_pn);
-    l2 = digitalRead(l2_pn);
-    l3 = digitalRead(l3_pn);
-    us1_distance = us_measure(us1T_pn, us1E_pn);
-    us2_distance = us_measure(us2T_pn, us2E_pn); 
+  ldr = analogRead(ldr_pn);
+  hall = analogRead(hall_pn);
+  ir1 = analogRead(ir1_pn);
+  ir2 = analogRead(ir2_pn);
+  onoff = update_onoff();
+  l0 = digitalRead(l0_pn);
+  l1 = digitalRead(l1_pn);
+  l2 = digitalRead(l2_pn);
+  l3 = digitalRead(l3_pn);
+  us1_distance = us_measure(us1T_pn, us1E_pn);
+  us2_distance = us_measure(us2T_pn, us2E_pn);
+
+  // calculate averages for distance readings
+  ir1_avg = moving_average(ir1);
+  ir2_avg = moving_average(ir2);
 };
 
-void line_follow() {
-    // copy content in line_follow_v2.ino here
-    flag_line = "on";
+bool update_onoff()
+{
+  if (millis() - lastTimeButtonStateChanged > debounceDuration)
+  {
+    byte buttonState = digitalRead(push_pn);
+    if (buttonState != lastButtonState)
+    {
+      lastTimeButtonStateChanged = millis();
+      lastButtonState = buttonState;
+      if (buttonState == LOW)
+      {
+        // do an action, for example print on Serial
+        Serial.println("Button released");
+        onoff = !onoff;
+      }
+    }
+  }
+  return onoff
+}
+
+void line_follow()
+{
+  // copy content in line_follow_v2.ino here
+  flag_line = "on";
 };
-
-
-
-
-
-
-
-
-
 
 void move_forward()
 {
@@ -88,21 +130,22 @@ void stop_move()
   Lwheel->setSpeed(0);
 }
 
-
-void turn_90left(){
-    Rwheel->run(FORWARD);
-    Rwheel->setSpeed(motor_speed);
-    Lwheel->run(RELEASE);
-    Lwheel->setSpeed(0);
-    delay(duration_steer);
+void turn_90left()
+{
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(RELEASE);
+  Lwheel->setSpeed(0);
+  delay(duration_steer);
 };
 
-void turn_90right() {
-    Rwheel->run(RELEASE);
-    Rwheel->setSpeed(0);
-    Lwheel->run(FORWARD);
-    Lwheel->setSpeed(motor_speed0);
-    delay(duration_steer);
+void turn_90right()
+{
+  Rwheel->run(RELEASE);
+  Rwheel->setSpeed(0);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(motor_speed0);
+  delay(duration_steer);
 }
 
 // side == 0;
@@ -129,10 +172,7 @@ void box_find();
 
 void box_delivery();
 
-
-
-
 // how to read from different sensors
-void IR_read(){
-
+void IR_read()
+{
 }
