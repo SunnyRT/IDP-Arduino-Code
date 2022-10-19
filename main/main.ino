@@ -23,8 +23,10 @@ const int us2E_pn=12;
 const int us2T_pn=13;
 
 // Sensor Values
-int ldr, l0, l1, l2, l3, ir1, ir2, hall;
+int ldr, l0, l1, l2, l3, ir1, ir2, hall, push;
 float us1_distance, us2_distance;
+float us1_ds[10]; // latest 10 values of us1
+float avg_us1; // moving average of us1
 
 
 

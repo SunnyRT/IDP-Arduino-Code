@@ -41,12 +41,26 @@ void sensor_read(){
 };
 
 // moving average function
-void update_avg(avg_array, avg_value){
+void update_avg(avg_array, avg_value, new_value){
     float sum_vals=0;
-    for(int i=0; i<10; i++){ // 10 = array length
+    int length = 10;
+    // array structure: 
+    // avg_array[0]=latest
+    // avg_array[length]=oldest
+
+    // remove oldest(last) item in array
+    for(int j=1; j<(length-1); j++){
+
+        // move all values along (to the right) by one
+        avg_array[j]=avg_array[j-1]; 
+    } 
+    // add newest value to start of list
+    avg_array[0] = new_value;
+    // find new average
+    for(int i=0; i<length; i++){ // 10 = array length
         sum_vals += avg_array[i]
     }
-    avg_value = sum_vals / 10; //10=array length
+    avg_value = sum_vals / length; //10=array length
     return avg_value
 }
 
