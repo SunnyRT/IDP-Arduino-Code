@@ -1,6 +1,5 @@
 /* include all libraries */
 #include "functions.h"
-
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
@@ -24,7 +23,6 @@ float us_measure(int trig_pin, int echo_pin)
 
 float moving_average(float new_reading)
 {
-
   const int nvalues = 10;     // Moving average window size
   static int current = 0;     // Index for current value
   static int value_count = 0; // Count of values read (<= nvalues)
