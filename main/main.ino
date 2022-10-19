@@ -3,10 +3,10 @@
 
 // Pins Set-up:
 //Analog:
-const int ldr_pn = 0;
-const int hall_pn = 1;
-const int ir1_pn = 4; // short range
-const int ir2_pn = 5; // long range
+const int ldr_pn = A0;
+const int hall_pn = A1;
+const int ir1_pn = A4; // short range
+const int ir2_pn = A5; // long range
 //Digital:
 const int push_pn=1; //ideally not use pin 1 (move to 5?)
 const int l0_pn=2; //left
@@ -27,11 +27,28 @@ int ldr, l0, l1, l2, l3, ir1, ir2, hall, push;
 float us1_distance, us2_distance;
 float us1_ds[10]; // latest 10 values of us1
 float avg_us1; // moving average of us1
+float ir1_avg, ir2_avg, us1_avg, us2_avg;
+int motor_speed = 250;
+int duration_steer; // require testing to determine value
 
+// button debounce variables
+byte lastButtonState = LOW;
+unsigned long debounceDuration = 50; // millis
+unsigned long lastTimeButtonStateChanged = 0;
+bool onoff = false;
 
+// flags
+int count = 0;
+bool flag_onoff;
+bool flag_started;
+bool flag_line;
 
-
-
+char flag_nav; 
+  //"P": stop
+  //"L": adjust left
+  //"R": adjust right
+  //"B": backwards
+  //"F": forwards
 
 void setup(){
   Serial.begin(9600);
@@ -53,11 +70,11 @@ void setup(){
   pinMode(us2E_pn, INPUT);
   pinMode(us2T_pn, OUTPUT);
 
+
+}
+
+void loop(){
   
-
- 
-
-
 }
 
 

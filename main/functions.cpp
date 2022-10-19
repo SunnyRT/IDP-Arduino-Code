@@ -1,6 +1,5 @@
 /* include all libraries */
 #include "functions.h"
-
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
@@ -9,8 +8,6 @@
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
 Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIHGT
 Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
-
-// global
 
 // calculate distance from ultrasonic sensors
 float us_measure(trig_pin, echo_pin){
@@ -22,6 +19,33 @@ float us_measure(trig_pin, echo_pin){
     float duration_us = pulseIn(echo_pin, HIGH);
     // return distance (*v_sound /2)
     return duration_us * 0.017;
+}
+
+
+float moving_average(float new_reading)
+{
+
+  const int nvalues = 10;     // Moving average window size
+  static int current = 0;     // Index for current value
+  static int value_count = 0; // Count of values read (<= nvalues)
+  static float sum = 0;       // Rolling sum
+  static float values[nvalues];
+
+  sum += new_reading;
+
+  // If the window is full, adjust the sum by deleting the oldest value
+  if (cvalues == nvalues)
+    sum -= values[current];
+
+  values[current] = value; // Replace the oldest with the latest
+
+  if (++current >= nvalues)
+    current = 0;
+
+  if (cvalues < nvalues)
+    cvalues += 1;
+
+  return sum / cvalues;
 }
 
 // collects sensor readings (will be run every loop)
@@ -40,85 +64,83 @@ void sensor_read(){
     us2_distance = us_measure(us2T_pn, us2E_pn); 
 };
 
-// moving average function
-void update_avg(avg_array, avg_value, new_value){
-    float sum_vals=0;
-    int length = 10;
-    // array structure: 
-    // avg_array[0]=latest
-    // avg_array[length]=oldest
 
-    // remove oldest(last) item in array
-    for(int j=1; j<(length-1); j++){
-
-        // move all values along (to the right) by one
-        avg_array[j]=avg_array[j-1]; 
-    } 
-    // add newest value to start of list
-    avg_array[0] = new_value;
-    // find new average
-    for(int i=0; i<length; i++){ // 10 = array length
-        sum_vals += avg_array[i]
+bool update_onoff()
+{
+  if (millis() - lastTimeButtonStateChanged > debounceDuration)
+  {
+    byte buttonState = digitalRead(push_pn);
+    if (buttonState != lastButtonState)
+    {
+      lastTimeButtonStateChanged = millis();
+      lastButtonState = buttonState;
+      if (buttonState == LOW)
+      {
+        // do an action, for example print on Serial
+        Serial.println("Button released");
+        onoff = !onoff;
+      }
     }
-    avg_value = sum_vals / length; //10=array length
-    return avg_value
+  }
+  return onoff
 }
 
 
-void line_follow();
+void line_follow()
+{
+  // copy content in line_follow_v2.ino here
+  flag_line = "on";
+};
 void move_forward()
 {
-    flag_foward = true;
-    flag_Lturn = false;
-    flag_Rturn = false;
-    flag_stop = false;
+    flag_nav = "F";
     Rwheel->run(FORWARD);
-    Rwheel->setSpeed(150);
+    Rwheel->setSpeed(motor_speed);
     Lwheel->run(FORWARD);
-    Lwheel->setSpeed(150);
+    Lwheel->setSpeed(motor_speed);
 }
 
 void adjust_left()
 {
-    flag_foward = false;
-    flag_Lturn = true;
-    flag_Rturn = false;
-    flag_stop = false;
-    Rwheel->run(FORWARD);
-    Rwheel->setSpeed(150);
-    Lwheel->run(BACKWARD);
-    Lwheel->setSpeed(150);
+  flag_nav = "L";
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(BACKWARD);
+  Lwheel->setSpeed(motor_speed);
 }
 
 void adjust_right()
 {
-    flag_foward = false;
-    flag_Lturn = false;
-    flag_Rturn = true;
-    flag_stop = false;
-    Rwheel->run(BACKWARD);
-    Rwheel->setSpeed(150);
-    Lwheel->run(FORWARD);
-    Lwheel->setSpeed(150);
+  flag_nav = "R";
+  Rwheel->run(BACKWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(motor_speed);
 }
-
 void stop_move()
 {
-    Rwheel->run(RELEASE);
-    Rwheel->setSpeed(0);
-    Lwheel->run(RELEASE);
-    Lwheel->setSpeed(0);
-    flag_foward = false;
-    flag_Lturn = false;
-    flag_Rturn = false;
-    flag_stop = true;
+  flag_nav = "P";
+  Rwheel->run(RELEASE);
+  Rwheel->setSpeed(0);
+  Lwheel->run(RELEASE);
+  Lwheel->setSpeed(0);
 }
 
-void turn_90left(){
-    Rwheel->run(FORWARD);
-    Rwheel->setSpped
+void turn_90left()
+{
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(RELEASE);
+  Lwheel->setSpeed(0);
+  delay(duration_steer);
 };
-void turn_90right();
+void turn_90right(){
+    Rwheel->run(RELEASE);
+    Rwheel->setSpeed(0);
+    Lwheel->run(FORWARD);
+    Lwheel->setSpeed(motor_speed0);
+  delay(duration_steer); 
+};
 
 // side == 0;
 void start_route();
