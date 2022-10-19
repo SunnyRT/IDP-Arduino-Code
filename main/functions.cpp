@@ -1,5 +1,6 @@
 /* include all libraries */
 #include "functions.h"
+
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
@@ -51,17 +52,21 @@ float moving_average(float new_reading)
 // collects sensor readings (will be run every loop)
 void sensor_read(){
   // light/line sensors:
-    ldr = analogRead(ldr_pn);
-    hall = analogRead(hall_pn);
-    ir1 = analogRead(ir1_pn);
-    ir2 = analogRead(ir2_pn);
-    push = digitalRead(push_pn);
-    l0 = digitalRead(l0_pn);
-    l1 = digitalRead(l1_pn);
-    l2 = digitalRead(l2_pn);
-    l3 = digitalRead(l3_pn);
-    us1_distance = us_measure(us1T_pn, us1E_pn);
-    us2_distance = us_measure(us2T_pn, us2E_pn); 
+  ldr = analogRead(ldr_pn);
+  hall = analogRead(hall_pn);
+  ir1 = analogRead(ir1_pn);
+  ir2 = analogRead(ir2_pn);
+  onoff = update_onoff();
+  l0 = digitalRead(l0_pn);
+  l1 = digitalRead(l1_pn);
+  l2 = digitalRead(l2_pn);
+  l3 = digitalRead(l3_pn);
+  us1_distance = us_measure(us1T_pn, us1E_pn);
+  us2_distance = us_measure(us2T_pn, us2E_pn);
+
+  // calculate averages for distance readings
+  ir1_avg = moving_average(ir1);
+  ir2_avg = moving_average(ir2);
 };
 
 
@@ -166,10 +171,7 @@ void box_find();
 
 void box_delivery();
 
-
-
-
 // how to read from different sensors
-void IR_read(){
-
+void IR_read()
+{
 }

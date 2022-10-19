@@ -1,5 +1,9 @@
 // include header files:
-#include functions.h
+#include "functions.h"
+#include <Wire.h>
+#include <Adafruit_MotorShield.h>
+#include "utility/Adafruit_MS_PWMServoDriver.h"
+
 
 // Pins Set-up:
 //Analog:
@@ -22,6 +26,16 @@ const int servo1_pn=11;
 const int us2E_pn=12;
 const int us2T_pn=13;
 
+
+
+// Setup the motor
+Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
+Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIHGT
+Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
+int motor_speed = 250;
+
+
+
 // Sensor Values
 int ldr, l0, l1, l2, l3, ir1, ir2, hall, push;
 float us1_distance, us2_distance;
@@ -37,6 +51,19 @@ unsigned long debounceDuration = 50; // millis
 unsigned long lastTimeButtonStateChanged = 0;
 bool onoff = false;
 
+float ir1_avg, ir2_avg, us1_avg, us2_avg;
+
+// array of averages
+float ir1_avg_arr[10]; // 10=window size for moving average
+int ir1_avg_arr_index = 0;
+
+// button debounce variables
+byte lastButtonState = LOW;
+unsigned long debounceDuration = 50; // millis
+unsigned long lastTimeButtonStateChanged = 0;
+bool onoff = false;
+
+
 // flags
 int count = 0;
 bool flag_onoff;
@@ -49,6 +76,9 @@ char flag_nav;
   //"R": adjust right
   //"B": backwards
   //"F": forwards
+
+
+
 
 void setup(){
   Serial.begin(9600);
@@ -69,12 +99,10 @@ void setup(){
   pinMode(servo1_pn, OUTPUT);
   pinMode(us2E_pn, INPUT);
   pinMode(us2T_pn, OUTPUT);
-
-
 }
 
 void loop(){
-  
+
 }
 
 

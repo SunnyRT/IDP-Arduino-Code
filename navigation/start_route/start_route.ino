@@ -1,11 +1,10 @@
 #include "functions.cpp";
 #include "functions.h";
 
-const int push_pn=1; //ideally not use pin 1 (move to 5?)
-const int l0_pn=2; //left
-const int l1_pn=3; //right
-const int l2_pn=4; //far right (for juntion counting)
-const int l3_pn=5;
+const int push_pn=2; //ideally not use pin 1 (move to 5?)
+const int l0_pn=3; //left
+const int l1_pn=4; //right
+const int l2_pn=5; //far right (for juntion counting)
 
 
 
