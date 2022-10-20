@@ -21,7 +21,7 @@ char flag_nav = 'P';
 int l0, l1, l2;
 
 int motor_speed = 250;
-int duration_steer = 5000;
+int duration_steer = 2000;
 
 // button variable
 byte lastButtonState = LOW;
@@ -53,6 +53,8 @@ void loop()
 
     Serial.print("Flag States: ");
     Serial.println(flag_nav);
+    Serial.println("Flag Started: ");
+    Serial.println(flag_started);
 
     // button debounce
     if (millis() - lastTimeButtonStateChanged > debounceDuration)
@@ -92,16 +94,60 @@ void loop()
 // define functions of start_route
 void start_route()
 {
-    if (l0 == HIGH && l1 == HIGH && l2 == HIGH && flag_nav != "F")
+    if (l0 == HIGH && l1 == HIGH && l2 == HIGH && flag_nav != 'F')
     {
-        move_foward();
+        move_forward();
     }
-    else if ((l0 == HIGH && l1 == HIGH) || l2 == HIGH)
+    else if ((l0 == LOW && l1 == LOW) || l2 == LOW)
     {
         turn_90right();
         flag_started = true; // exit start_route
     }
 }
+
+
+
+void line_follow() {
+if (l2 == LOW && flag_nav != 'P')
+  {
+    Serial.println("Junctions detected!");
+    stop_move();
+  }
+
+  else if (l2 == HIGH)
+  {
+    // neither l0 or l1 detects the line
+    if ((l0 == HIGH && l1 == HIGH) && flag_nav != 'F')
+    {
+      // forward
+      move_forward();
+      Serial.println("MOVE FORWARD!");
+    }
+
+    // l0 detects the line
+    else if ((l0 == LOW && l1 == HIGH) && flag_nav != 'L')
+    {
+      // adjust left slightly
+      adjust_left();
+    }
+
+    // l1 detects the line
+    else if ((l0 == HIGH && l1 == LOW) && flag_nav != 'R')
+    {
+      // adjust right slightly
+      adjust_right();
+    }
+
+    // l0 and l1 both detect the line
+    else if ((l0 == LOW && l1 == LOW) && flag_nav != 'P')
+    {
+      // forward
+      stop_move();
+    }
+  }
+}
+
+
 
 // functions
 void move_forward()
@@ -145,6 +191,6 @@ void turn_90right()
     Rwheel->run(FORWARD);
     Rwheel->setSpeed(100);
     Lwheel->run(FORWARD);
-    Lwheel->setSpeed(motor_speed0);
+    Lwheel->setSpeed(motor_speed);
     delay(duration_steer);
 }
