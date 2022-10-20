@@ -11,17 +11,17 @@ Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIHGT
 Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 
 // calculate distance from ultrasonic sensors
-float us_measure(trig_pin, echo_pin){
-    // generate 10-microsecond pulse to TRIG pin
-    digitalWrite(trig_pin, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(trig_pin, LOW);
-     // measure duration of pulse from ECHO pin
-    float duration_us = pulseIn(echo_pin, HIGH);
-    // return distance (*v_sound /2)
-    return duration_us * 0.017;
+float us_measure(trig_pin, echo_pin)
+{
+  // generate 10-microsecond pulse to TRIG pin
+  digitalWrite(trig_pin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig_pin, LOW);
+  // measure duration of pulse from ECHO pin
+  float duration_us = pulseIn(echo_pin, HIGH);
+  // return distance (*v_sound /2)
+  return duration_us * 0.017;
 }
-
 
 float moving_average(float new_reading)
 {
@@ -50,7 +50,8 @@ float moving_average(float new_reading)
 }
 
 // collects sensor readings (will be run every loop)
-void sensor_read(){
+void sensor_read()
+{
   // light/line sensors:
   ldr = analogRead(ldr_pn);
   hall = analogRead(hall_pn);
@@ -68,7 +69,6 @@ void sensor_read(){
   ir1_avg = moving_average(ir1);
   ir2_avg = moving_average(ir2);
 };
-
 
 bool update_onoff()
 {
@@ -90,7 +90,6 @@ bool update_onoff()
   return onoff
 }
 
-
 void line_follow()
 {
   // copy content in line_follow_v2.ino here
@@ -98,11 +97,11 @@ void line_follow()
 };
 void move_forward()
 {
-    flag_nav = 'F';
-    Rwheel->run(FORWARD);
-    Rwheel->setSpeed(motor_speed);
-    Lwheel->run(FORWARD);
-    Lwheel->setSpeed(motor_speed);
+  flag_nav = 'F';
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(motor_speed);
 }
 
 void adjust_left()
@@ -138,14 +137,16 @@ void turn_90left()
   Lwheel->run(RELEASE);
   Lwheel->setSpeed(0);
   delay(duration_steer);
-};
-void turn_90right(){
-    Rwheel->run(RELEASE);
-    Rwheel->setSpeed(0);
-    Lwheel->run(FORWARD);
-    Lwheel->setSpeed(motor_speed0);
-  delay(duration_steer); 
-};
+}
+
+void turn_90right()
+{
+  Rwheel->run(RELEASE);
+  Rwheel->setSpeed(0);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(motor_speed0);
+  delay(duration_steer);
+}
 
 // side == 0;
 void start_route();
