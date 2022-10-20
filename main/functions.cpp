@@ -98,7 +98,7 @@ void line_follow()
 };
 void move_forward()
 {
-    flag_nav = "F";
+    flag_nav = 'F';
     Rwheel->run(FORWARD);
     Rwheel->setSpeed(motor_speed);
     Lwheel->run(FORWARD);
@@ -107,7 +107,7 @@ void move_forward()
 
 void adjust_left()
 {
-  flag_nav = "L";
+  flag_nav = 'L';
   Rwheel->run(FORWARD);
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(BACKWARD);
@@ -116,7 +116,7 @@ void adjust_left()
 
 void adjust_right()
 {
-  flag_nav = "R";
+  flag_nav = 'R';
   Rwheel->run(BACKWARD);
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(FORWARD);
@@ -124,7 +124,7 @@ void adjust_right()
 }
 void stop_move()
 {
-  flag_nav = "P";
+  flag_nav = 'P';
   Rwheel->run(RELEASE);
   Rwheel->setSpeed(0);
   Lwheel->run(RELEASE);
