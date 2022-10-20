@@ -1,6 +1,6 @@
-float moving_average(float new_reading){
+float moving_avg(float new_reading){
 
-  const int nvalues = 10;               // Moving average window size
+  const int nvalues = 20;               // Moving average window size
   static int current = 0;               // Index for current value
   static int value_count = 0;           // Count of values read (<= nvalues)
   static float sum = 0;                  // Rolling sum
@@ -18,14 +18,16 @@ float moving_average(float new_reading){
     current = 0;
 
   if (value_count < nvalues)
-    cvalues += 1;
+    value_count += 1;
 
   return sum/value_count;
 }
-const int ir1_pn = A4; // short range
+
+const int ir1_pn = A5; // short range
 int ir1;
-float ir1_avg_arr[10]; // 10=window size for moving average
-int ir1_avg_arr_index = 0;
+float ir1_avg;
+
+
 
 void setup(){
   Serial.begin(9600);
@@ -34,8 +36,9 @@ void setup(){
 }
 
 void loop(){
-  Serial.print("Test");
+  // Serial.println("Test");
   ir1 = analogRead(ir1_pn);
   ir1_avg = moving_avg(ir1);
-
+  Serial.println(ir1_avg);
+  delay(2);
 }

@@ -13,10 +13,9 @@ const int ir1_pn = A4; // short range
 const int ir2_pn = A5; // long range
 //Digital:
 const int push_pn=1; //ideally not use pin 1 (move to 5?)
-const int l0_pn=2; //left
-const int l1_pn=3; //right
-const int l2_pn=4; //far right (for juntion counting)
-const int l3_pn=5;
+const int l0_pn=3; //left
+const int l1_pn=4; //right
+const int l2_pn=5; //far right (for juntion counting)
 const int us1E_pn=6; // yellow wire
 const int us1T_pn=7; // green wire
 const int ledG_pn=8;
