@@ -112,6 +112,7 @@ if (l2 == LOW && flag_nav != 'P')
   {
     Serial.println("Junctions detected!");
     stop_move();
+    delay(1000);
   }
 
   else if (l2 == HIGH)
