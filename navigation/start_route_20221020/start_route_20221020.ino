@@ -1,4 +1,4 @@
-#include "functions.cpp";
+// #include "functions.cpp";
 #include "functions.h";
 
 const int push_pn=2; //ideally not use pin 1 (move to 5?)

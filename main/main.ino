@@ -38,8 +38,6 @@ int motor_speed = 250;
 // Sensor Values
 int ldr, l0, l1, l2, l3, ir1, ir2, hall, push;
 float us1_distance, us2_distance;
-float us1_ds[10]; // latest 10 values of us1
-float avg_us1; // moving average of us1
 float ir1_avg, ir2_avg, us1_avg, us2_avg;
 int motor_speed = 250;
 int duration_steer; // require testing to determine value
@@ -60,13 +58,17 @@ int count = 0;
 bool flag_onoff;
 bool flag_started;
 bool flag_line;
+int flag_side; // 0, 1, 2, 3, or 4
+
 
 char flag_nav; 
-  //"P": stop
-  //"L": adjust left
-  //"R": adjust right
-  //"B": backwards
-  //"F": forwards
+/*
+  "P": stop
+  "L": adjust left
+  "R": adjust right
+  "B": backwards
+  "F": forwards
+*/
 
 
 
@@ -93,6 +95,8 @@ void setup(){
 }
 
 void loop(){
+  //update all sensor readings
+  sensor_read();
 
 }
 

@@ -23,30 +23,29 @@ float us_measure(trig_pin, echo_pin){
 }
 
 
-float moving_average(float new_reading)
-{
+float moving_avg(float new_reading){
 
-  const int nvalues = 10;     // Moving average window size
-  static int current = 0;     // Index for current value
-  static int value_count = 0; // Count of values read (<= nvalues)
-  static float sum = 0;       // Rolling sum
+  const int nvalues = 20;               // Moving average window size
+  static int current = 0;               // Index for current value
+  static int value_count = 0;           // Count of values read (<= nvalues)
+  static float sum = 0;                  // Rolling sum
   static float values[nvalues];
 
   sum += new_reading;
 
   // If the window is full, adjust the sum by deleting the oldest value
-  if (cvalues == nvalues)
+  if (value_count == nvalues)
     sum -= values[current];
 
-  values[current] = value; // Replace the oldest with the latest
+  values[current] = new_reading;          // Replace the oldest with the latest
 
   if (++current >= nvalues)
     current = 0;
 
-  if (cvalues < nvalues)
-    cvalues += 1;
+  if (value_count < nvalues)
+    value_count += 1;
 
-  return sum / cvalues;
+  return sum/value_count;
 }
 
 // collects sensor readings (will be run every loop)
@@ -65,10 +64,49 @@ void sensor_read(){
   us2_distance = us_measure(us2T_pn, us2E_pn);
 
   // calculate averages for distance readings
-  ir1_avg = moving_average(ir1);
-  ir2_avg = moving_average(ir2);
+  ir1_avg = moving_avg(ir1);
+  ir2_avg = moving_avg(ir2);
+  us1_avg = moving_avg(us1_distance);
+  us2_avg = moving_avg(us2_distance);
 };
 
+// identify which side we are on
+void side_identify(RH_sensor){
+  float side0r_ub = 100; //experimentally determine
+  float side0r_lb = 0;
+  float side1r_ub = 100; //experimentally determine
+  float side1r_lb = 0;
+  float side2r_ub = 100; //experimentally determine
+  float side2r_lb = 0;
+  float side3r_ub = 100; //experimentally determine
+  float side3r_lb = 0;
+  float side4r_ub = 100; //experimentally determine
+  float side4r_lb = 0;
+
+  // if ir1 within Rside0 range AND the flag_side is not already 0
+  if(side0r_lb<RH_sensor<side0r_ub && flag_side != 0){
+    // later: check with other sensors maybe?
+    // raise side0 flag
+    flag_side = 0;
+  }
+  else if(side1r_lb<RH_sensor<side1r_ub && flag_side != 1){
+    // raise side0 flag
+    flag_side = 1;
+  }
+  else if(side2r_lb<RH_sensor<side2r_ub && flag_side != 2){
+    // raise side0 flag
+    flag_side = 2;
+  }
+  else if(side3r_lb<RH_sensor<side3r_ub && flag_side != 3){
+    // raise side0 flag
+    flag_side = 3;
+  }
+  else if(side4r_lb<RH_sensor<side3r_ub && flag_side != 3){
+    // raise side0 flag
+    flag_side = 4;
+  }
+
+}
 
 bool update_onoff()
 {
@@ -171,7 +209,3 @@ void box_find();
 
 void box_delivery();
 
-// how to read from different sensors
-void IR_read()
-{
-}
