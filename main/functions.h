@@ -13,17 +13,22 @@ extern const int us2E_pn, us2T_pn;
 extern int ldr, l0, l1, l2, l3, ir1, ir2, hall, push;
 extern float us1_distance, us2_distance;
 extern float ir1_avg, ir2_avg, us1_avg, us2_avg;
+extern int motor_speed = 250;
+extern int duration_steer; // require testing to determine value
 
+// button debounce variables
+extern byte lastButtonState = LOW;
+extern unsigned long debounceDuration = 50; // millis
+extern unsigned long lastTimeButtonStateChanged = 0;
+extern bool onoff = false;
 
-// external global variables
-extern const int ldr_pn, hall_pn, ir1_pn, ir2_pn, push_pn;
-extern const int l0_pn, l1_pn, l2_pn, l3_pn, us1E_pn, us1T_pn;
-extern const int ledG_pn, ledA_pn, ledR_pn, servo1_pn;
-extern const int us2E_pn, us2T_pn;
+// flags
+extern int count = 0;
+extern bool flag_onoff;
+extern bool flag_started;
+extern bool flag_line;
+char flag_nav; 
 
-extern int ldr, l0, l1, l2, l3, ir1, ir2, hall, push;
-extern float us1_distance, us2_distance;
-extern float ir1_avg, ir2_avg, us1_avg, us2_avg;
 
 // global
 void sensor_read();
