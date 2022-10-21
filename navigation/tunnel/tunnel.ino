@@ -4,6 +4,8 @@
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 
+const int us1E_pn=6; // yellow wire
+const int us1T_pn=7; // green wire
 
 // reference link: https://create.arduino.cc/projecthub/anova9347/line-follower-robot-with-pid-controller-cdedbd
 
@@ -37,13 +39,6 @@ int lastError = 0;
 float us1_avg;
 int side;
 
-/*************************************************************************
-* Motor speed variables (choose between 0 - no speed, and 255 - maximum speed)
-*************************************************************************/
-const int maxspeedR = 150;
-const int maxspeedL = 150;
-const int basespeedR = 100;
-const int basespeedL = 100;
 
 
 
@@ -64,6 +59,15 @@ void loop()
  *************************************************************************/
 void tunnel_PID_control()
 {
+    
+/*************************************************************************
+* Motor speed variables (choose between 0 - no speed, and 255 - maximum speed)
+*************************************************************************/
+const int maxspeedR = 150;
+const int maxspeedL = 150;
+const int basespeedR = 100;
+const int basespeedL = 100;
+
     int error = 5.0 - us1_avg; // 5.0 is the ideal distance from the tunnel wall
 
     P = error;
@@ -76,13 +80,13 @@ void tunnel_PID_control()
     int motorspeedR = basespeedR + motorspeed;
     int motorspeedL = basespeedL - motorspeed;
 
-    if (motorspeedR > motorspeedR)
+    if (motorspeedR > maxspeedR)
     {
-        motorspeedR = motorspeedR;
+        motorspeedR = maxspeedR;
     }
-    if (motorspeedL > motorspeedL)
+    if (motorspeedL > maxspeedL)
     {
-        motorspeedL = motorspeedL;
+        motorspeedL = maxspeedL;
     }
     if (motorspeedR < 0)
     {
