@@ -1,6 +1,5 @@
 /* include all libraries */
 #include "functions.h"
-
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
@@ -68,6 +67,9 @@ void sensor_read(){
   ir2_avg = moving_avg(ir2);
   us1_avg = moving_avg(us1_distance);
   us2_avg = moving_avg(us2_distance);
+
+  //identify which side we are on:
+  side_identify(us1_avg); //Change depending on which sensor is on the right
 };
 
 // identify which side we are on
@@ -85,7 +87,6 @@ void side_identify(RH_sensor){
 
   // if ir1 within Rside0 range AND the flag_side is not already 0
   if(side0r_lb<RH_sensor<side0r_ub && flag_side != 0){
-    // later: check with other sensors maybe?
     // raise side0 flag
     flag_side = 0;
   }
@@ -209,3 +210,14 @@ void box_find();
 
 void box_delivery();
 
+void move_servo(){
+  for (pos = 0; pos <= 90; pos += 1) { // goes from 0 degrees to 180 degrees
+    // in steps of 1 degree
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
+  for (pos = 90; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
+    myservo.write(pos);              // tell servo to go to position in variable 'pos'
+    delay(15);                       // waits 15ms for the servo to reach the position
+  }
+}
