@@ -12,7 +12,7 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 #define BUTTON_PIN 2 // switch
 #define l0_pn 3      // left
 #define l1_pn 4      // right
-#define l2_pn 5     // far right
+#define l2_pn 5      // far right
 
 // Variables will change:
 bool flag_started = false;
@@ -20,7 +20,6 @@ bool flag_onoff = false;
 char flag_nav = 'P';
 int motor_speed = 250;
 int l0, l1, l2;
-
 
 // button variable
 byte lastButtonState = LOW;
@@ -37,8 +36,6 @@ void setup()
   AFMS.begin(); // Connect to the controller
 }
 
-
-
 void loop()
 {
   // read and store light sensor values
@@ -54,9 +51,8 @@ void loop()
 
   Serial.print("Flag States: ");
   Serial.println(flag_nav);
-  
-  
-  //button debounce
+
+  // button debounce
   if (millis() - lastTimeButtonStateChanged > debounceDuration)
   {
     byte buttonState = digitalRead(BUTTON_PIN);
@@ -75,23 +71,23 @@ void loop()
   Serial.print("ONOFF: ");
   Serial.println(flag_onoff);
 
-  if (flag_onoff == true) {
+  if (flag_onoff == true)
+  {
     line_follow();
   }
 
-  else if (flag_onoff ==false && flag_nav !='P') {
+  else if (flag_onoff == false && flag_nav != 'P')
+  {
     stop_move();
   }
 }
 
-
-
-
-
 /***********************************************************/
 // define functions
-void line_follow() {
-if (l2 == LOW && flag_nav != 'P')
+void line_follow()
+{
+
+  if (l2 == LOW && flag_nav != 'P')
   {
     Serial.println("Junctions detected!");
     stop_move();
