@@ -77,12 +77,15 @@ void loop()
 
     if (flag_onoff == false && flag_nav != 'P')
     {
+        flag_line = false;
         stop_move();
     }
 
     else if (flag_onoff == true && flag_started == false)
     {
+        flag_line = false;
         start_route();
+        flag_line = true; //back onto the line after start_route completed i.e. started
     }
     else if (flag_onoff == true && flag_started == true)
     {
