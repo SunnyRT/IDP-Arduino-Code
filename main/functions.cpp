@@ -57,7 +57,7 @@ void sensor_read()
   hall = analogRead(hall_pn);
   ir1 = analogRead(ir1_pn);
   ir2 = analogRead(ir2_pn);
-  onoff = update_onoff();
+  update_onoff();
   l0 = digitalRead(l0_pn);
   l1 = digitalRead(l1_pn);
   l2 = digitalRead(l2_pn);
@@ -83,25 +83,25 @@ bool update_onoff()
       {
         // do an action, for example print on Serial
         Serial.println("Button released");
-        onoff = !onoff;
+        flag_onoff = !flag_onoff;
       }
     }
-  }
-  return onoff
+  } 
 }
 
 void line_follow()
 {
   // copy content in line_follow_v2.ino here
-  flag_line = "on";
 };
-void move_forward()
+
+
+void move_forward(int speedR, int speedL)
 {
   flag_nav = 'F';
   Rwheel->run(FORWARD);
-  Rwheel->setSpeed(motor_speed);
+  Rwheel->setSpeed(speedR);
   Lwheel->run(FORWARD);
-  Lwheel->setSpeed(motor_speed);
+  Lwheel->setSpeed(speedL);
 }
 
 void adjust_left()
@@ -149,7 +149,7 @@ void turn_90right()
 }
 
 // side == 0;
-void start_route();
+void start_route(); //done
 
 // side == 1;
 void ramp_up();
@@ -165,7 +165,7 @@ void blk_collect();
 void blk_retriet();
 
 // side == 3;
-void tunnel();
+void tunnel(); //done --> tunnel PID control
 
 // side == 4;
 void box_find();
