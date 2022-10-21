@@ -38,7 +38,12 @@ int motor_speed = 250;
 // Sensor Values
 int ldr, l0, l1, l2, l3, ir1, ir2, hall, push;
 float us1_distance, us2_distance;
+<<<<<<< HEAD
+=======
+float us1_ds[10]; // latest 10 values of us1
+>>>>>>> 642ec2afb3c840fd14d540c209ac4a29607b31e2
 float ir1_avg, ir2_avg, us1_avg, us2_avg;
+float last_us1_avg, last_us2_avg;
 int motor_speed = 250;
 int duration_steer; // require testing to determine value
 
@@ -46,7 +51,6 @@ int duration_steer; // require testing to determine value
 byte lastButtonState = LOW;
 unsigned long debounceDuration = 50; // millis
 unsigned long lastTimeButtonStateChanged = 0;
-bool onoff = false;
 
 // array of averages
 float ir1_avg_arr[10]; // 10=window size for moving average
@@ -54,8 +58,9 @@ int ir1_avg_arr_index = 0;
 
 
 // flags
+int side;
 int count = 0;
-bool flag_onoff;
+bool flag_onoff = false;
 bool flag_started;
 bool flag_line;
 int flag_side; // 0, 1, 2, 3, or 4
@@ -69,6 +74,10 @@ char flag_nav;
   "B": backwards
   "F": forwards
 */
+
+bool flag_blk;
+bool flag_magnet;
+int box_intend;
 
 
 

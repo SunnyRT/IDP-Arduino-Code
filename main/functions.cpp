@@ -10,15 +10,16 @@ Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIHGT
 Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 
 // calculate distance from ultrasonic sensors
-float us_measure(trig_pin, echo_pin){
-    // generate 10-microsecond pulse to TRIG pin
-    digitalWrite(trig_pin, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(trig_pin, LOW);
-     // measure duration of pulse from ECHO pin
-    float duration_us = pulseIn(echo_pin, HIGH);
-    // return distance (*v_sound /2)
-    return duration_us * 0.017;
+float us_measure(trig_pin, echo_pin)
+{
+  // generate 10-microsecond pulse to TRIG pin
+  digitalWrite(trig_pin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig_pin, LOW);
+  // measure duration of pulse from ECHO pin
+  float duration_us = pulseIn(echo_pin, HIGH);
+  // return distance (*v_sound /2)
+  return duration_us * 0.017;
 }
 
 
@@ -48,13 +49,14 @@ float moving_avg(float new_reading){
 }
 
 // collects sensor readings (will be run every loop)
-void sensor_read(){
+void sensor_read()
+{
   // light/line sensors:
   ldr = analogRead(ldr_pn);
   hall = analogRead(hall_pn);
   ir1 = analogRead(ir1_pn);
   ir2 = analogRead(ir2_pn);
-  onoff = update_onoff();
+  update_onoff();
   l0 = digitalRead(l0_pn);
   l1 = digitalRead(l1_pn);
   l2 = digitalRead(l2_pn);
@@ -122,26 +124,25 @@ bool update_onoff()
       {
         // do an action, for example print on Serial
         Serial.println("Button released");
-        onoff = !onoff;
+        flag_onoff = !flag_onoff;
       }
     }
-  }
-  return onoff
+  } 
 }
-
 
 void line_follow()
 {
   // copy content in line_follow_v2.ino here
-  flag_line = "on";
 };
-void move_forward()
+
+
+void move_forward(int speedR, int speedL)
 {
-    flag_nav = 'F';
-    Rwheel->run(FORWARD);
-    Rwheel->setSpeed(motor_speed);
-    Lwheel->run(FORWARD);
-    Lwheel->setSpeed(motor_speed);
+  flag_nav = 'F';
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(speedR);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(speedL);
 }
 
 void adjust_left()
@@ -177,17 +178,19 @@ void turn_90left()
   Lwheel->run(RELEASE);
   Lwheel->setSpeed(0);
   delay(duration_steer);
-};
-void turn_90right(){
-    Rwheel->run(RELEASE);
-    Rwheel->setSpeed(0);
-    Lwheel->run(FORWARD);
-    Lwheel->setSpeed(motor_speed0);
-  delay(duration_steer); 
-};
+}
+
+void turn_90right()
+{
+  Rwheel->run(RELEASE);
+  Rwheel->setSpeed(0);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(motor_speed0);
+  delay(duration_steer);
+}
 
 // side == 0;
-void start_route();
+void start_route(); //done
 
 // side == 1;
 void ramp_up();
@@ -203,7 +206,7 @@ void blk_collect();
 void blk_retriet();
 
 // side == 3;
-void tunnel();
+void tunnel(); //done --> tunnel PID control
 
 // side == 4;
 void box_find();
