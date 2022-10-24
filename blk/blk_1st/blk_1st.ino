@@ -7,6 +7,7 @@ extern bool flag_blk;
 extern bool flag_magnet;
 
 extern int box_intend;
+extern int box_pass;
 
 // sensor readings
 extern float ir_avg;
