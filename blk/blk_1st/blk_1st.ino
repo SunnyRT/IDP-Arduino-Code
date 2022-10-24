@@ -12,6 +12,7 @@ extern int box_pass;
 // sensor readings
 extern float ir_avg;
 extern float hall;
+extern int ldr;
 
 void loop()
 {
@@ -20,8 +21,9 @@ void loop()
         // first time & blk is not collected
         if (count == 0 & flag_blk == false)
         {
-            while (ir_avg >= 5) // the threshold value here requires measurement & calibration
+            while (ir_avg >= 3) // the threshold value here requires measurement & calibration
             {
+                sensor_read(); //update l0, l1, l2
                 // approach the blk until it is 5cm away
                 line_follow();
             }
@@ -64,7 +66,7 @@ void blk_magnet_identify()
 
 void blk_collect()
 {
-    while (ir_avg >= 0) // the threshold value here requires measurement & calibration
+    while (ldr >= 0) // the threshold value here requires measurement & calibration
     {
         // continue to approach the blk until it touches.
         line_follow();
