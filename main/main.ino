@@ -24,26 +24,21 @@ const int ledR_pn=10;
 const int servo1_pn=11;
 const int us2E_pn=12;
 const int us2T_pn=13;
-
+int motor_speed = 250;
 
 
 // Setup the motor
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
-Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIHGT
+Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIGHT
 Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
-int motor_speed = 250;
+
 
 
 
 // Sensor Values
 int ldr, l0, l1, l2, l3, ir1, ir2, hall, push;
 float us1_distance, us2_distance;
-<<<<<<< HEAD
-=======
-float us1_ds[10]; // latest 10 values of us1
->>>>>>> 642ec2afb3c840fd14d540c209ac4a29607b31e2
 float ir1_avg, ir2_avg, us1_avg, us2_avg;
-float last_us1_avg, last_us2_avg;
 int motor_speed = 250;
 int duration_steer; // require testing to determine value
 
@@ -58,22 +53,21 @@ int ir1_avg_arr_index = 0;
 
 
 // flags
-int side;
+int side; // 0,1,2,3,4,5
 int count = 0;
 bool flag_onoff = false;
 bool flag_started;
 bool flag_line;
-int flag_side; // 0, 1, 2, 3, or 4
+int flag_side; 
+
 
 
 char flag_nav; 
-/*
-  "P": stop
-  "L": adjust left
-  "R": adjust right
-  "B": backwards
-  "F": forwards
-*/
+  //"P": stop
+  //"L": adjust left
+  //"R": adjust right
+  //"B": backwards
+  //"F": forwards
 
 bool flag_blk;
 bool flag_magnet;
@@ -104,8 +98,15 @@ void setup(){
 }
 
 void loop(){
-  //update all sensor readings
+  //update all sensor readings & determine which side we're on
   sensor_read();
+  Serial.print("Side_flag: ", flag_side);
+
+  // switch (flag_side){
+  //   case 0:
+    
+  // }
+  
 
 }
 

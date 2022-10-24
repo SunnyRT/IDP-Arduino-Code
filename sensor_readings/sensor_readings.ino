@@ -1,3 +1,5 @@
+#include "functions.h"
+
 float moving_avg(float new_reading){
 
   const int nvalues = 20;               // Moving average window size
@@ -42,3 +44,5 @@ void loop(){
   Serial.println(ir1_avg);
   delay(2);
 }
+
+
