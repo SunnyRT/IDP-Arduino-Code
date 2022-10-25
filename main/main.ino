@@ -4,6 +4,10 @@
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 
+/* setup the motor and create the DC motor object*/
+Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
+Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIHGT
+Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 
 // Pins Set-up:
 //Analog:
@@ -28,9 +32,9 @@ int motor_speed = 250;
 
 
 // Setup the motor
-Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
-Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIGHT
-Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
+//Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
+//Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIGHT
+//Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 
 
 
@@ -39,7 +43,6 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 int ldr, l0, l1, l2, l3, ir1, ir2, hall, push;
 float us1_distance, us2_distance;
 float ir1_avg, ir2_avg, us1_avg, us2_avg;
-int motor_speed = 250;
 int duration_steer; // require testing to determine value
 
 // button debounce variables
@@ -101,7 +104,6 @@ void setup(){
 void loop(){
   //update all sensor readings & determine which side we're on
   sensor_read();
-  Serial.print("Side_flag: ", flag_side);
 
   // switch (flag_side){
   //   case 0:
@@ -110,5 +112,3 @@ void loop(){
   
 
 }
-
-

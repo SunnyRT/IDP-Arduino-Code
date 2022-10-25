@@ -4,13 +4,10 @@
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 
-/* setup the motor and create the DC motor object*/
-Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
-Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIHGT
-Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
+
 
 // calculate distance from ultrasonic sensors
-float us_measure(trig_pin, echo_pin)
+float us_measure(int trig_pin, int echo_pin)
 {
   // generate 10-microsecond pulse to TRIG pin
   digitalWrite(trig_pin, HIGH);
@@ -70,46 +67,10 @@ void sensor_read()
   us1_avg = moving_avg(us1_distance);
   us2_avg = moving_avg(us2_distance);
 
-  //identify which side we are on:
-  side_identify(us1_avg); //Change depending on which sensor is on the right
+//  //identify which side we are on:
+//  side_identify(us1_avg); //Change depending on which sensor is on the right
 };
 
-// identify which side we are on
-void side_identify(RH_sensor){
-  float side0r_ub = 100; //experimentally determine
-  float side0r_lb = 0;
-  float side1r_ub = 100; //experimentally determine
-  float side1r_lb = 0;
-  float side2r_ub = 100; //experimentally determine
-  float side2r_lb = 0;
-  float side3r_ub = 100; //experimentally determine
-  float side3r_lb = 0;
-  float side4r_ub = 100; //experimentally determine
-  float side4r_lb = 0;
-
-  // if ir1 within Rside0 range AND the flag_side is not already 0
-  if(side0r_lb<RH_sensor<side0r_ub && flag_side != 0){
-    // raise side0 flag
-    flag_side = 0;
-  }
-  else if(side1r_lb<RH_sensor<side1r_ub && flag_side != 1){
-    // raise side0 flag
-    flag_side = 1;
-  }
-  else if(side2r_lb<RH_sensor<side2r_ub && flag_side != 2){
-    // raise side0 flag
-    flag_side = 2;
-  }
-  else if(side3r_lb<RH_sensor<side3r_ub && flag_side != 3){
-    // raise side0 flag
-    flag_side = 3;
-  }
-  else if(side4r_lb<RH_sensor<side3r_ub && flag_side != 3){
-    // raise side0 flag
-    flag_side = 4;
-  }
-
-}
 
 bool update_onoff()
 {
@@ -185,7 +146,7 @@ void turn_90right()
   Rwheel->run(RELEASE);
   Rwheel->setSpeed(0);
   Lwheel->run(FORWARD);
-  Lwheel->setSpeed(motor_speed0);
+  Lwheel->setSpeed(motor_speed);
   delay(duration_steer);
 }
 
@@ -212,15 +173,3 @@ void tunnel(); //done --> tunnel PID control
 void box_find();
 
 void box_delivery();
-
-void move_servo(){
-  for (pos = 0; pos <= 90; pos += 1) { // goes from 0 degrees to 180 degrees
-    // in steps of 1 degree
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(15);                       // waits 15ms for the servo to reach the position
-  }
-  for (pos = 90; pos >= 0; pos -= 1) { // goes from 180 degrees to 0 degrees
-    myservo.write(pos);              // tell servo to go to position in variable 'pos'
-    delay(15);                       // waits 15ms for the servo to reach the position
-  }
-}

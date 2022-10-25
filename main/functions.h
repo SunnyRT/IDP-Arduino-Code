@@ -4,7 +4,9 @@
 
 #include <Arduino.h>
 
+
 // Global Variables ===================================================
+
 extern const int ldr_pn, hall_pn, ir1_pn, ir2_pn, push_pn;
 extern const int l0_pn, l1_pn, l2_pn, l3_pn, us1E_pn, us1T_pn;
 extern const int ledG_pn, ledA_pn, ledR_pn, servo1_pn;
