@@ -5,18 +5,23 @@
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 
 // calculate distance from ultrasonic sensors
-float us_measure(int trig_pin, int echo_pin)
+void us_measure()
 {
-  digitalWrite(trig_pin, LOW);
-  delayMicroseconds(2);
+  digitalWrite(us1T_pn, LOW);
+  digitalWrite(us2T_pn, LOW);
+  delayMicroseconds(1);
   // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(trig_pin, HIGH);
+  digitalWrite(us1T_pn, HIGH);
+  digitalWrite(us2T_pn, HIGH);
   delayMicroseconds(10);
-  digitalWrite(trig_pin, LOW);
+  digitalWrite(us1T_pn, LOW);
+  digitalWrite(us2T_pn, LOW);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  float duration_us = pulseIn(echo_pin, HIGH);
-  // return distance (*v_sound /2)
-  return duration_us * 0.017;
+  float us1_duration = pulseIn(us1E_pn, HIGH);
+  float us2_duration = pulseIn(us2E_pn, HIGH);
+  // get distance values(*v_sound /2)
+  us1_distance= us1_duration * 0.017;
+  us2_distance= us2_duration * 0.017; 
 }
 float moving_avg(float new_reading)
 {
@@ -47,7 +52,6 @@ float moving_avg(float new_reading)
 // collects sensor readings (will be run every loop)
 void sensor_read()
 {
-  // light/line sensors:
   ldr = analogRead(ldr_pn);
   hall = analogRead(hall_pn);
   ir1 = analogRead(ir1_pn);
@@ -56,18 +60,9 @@ void sensor_read()
   l0 = digitalRead(l0_pn);
   l1 = digitalRead(l1_pn);
   l2 = digitalRead(l2_pn);
-  // l3 = digitalRead(l3_pn);
-  us1_distance = us_measure(us1T_pn, us1E_pn);
-  us2_distance = us_measure(us2T_pn, us2E_pn);
-
-  // calculate averages for distance readings
+  us_measure(); 
   ir1_avg = moving_avg(ir1);
   ir2_avg = moving_avg(ir2);
-  us1_avg = moving_avg(us1_distance);
-  us2_avg = moving_avg(us2_distance);
-
-  //  //identify which side we are on:
-  //  side_identify(us1_avg); //Change depending on which sensor is on the right
 };
 
 bool update_onoff()
@@ -100,61 +95,51 @@ void ledA_flash()
   // between the current time and last time you blinked the LED is bigger than
   // the interval at which you want to blink the LED.
   unsigned long currentMillis = millis();
-
   if (currentMillis - previousMillis >= interval)
   {
     // save the last time you blinked the LED
     previousMillis = currentMillis;
-
-    // if the LED is off turn it on and vice-versa:
-    if (ledAState == LOW)
-    {
+    // toggle LED
+    if (ledAState == LOW){
       ledAState = HIGH;
     }
-    else
-    {
+    else{
       ledAState = LOW;
     }
-
     // set the LED with the ledState of the variable:
     digitalWrite(ledA_pn, ledAState);
   }
 }
-
 // side == 0;
 void start_route(); // done
-
 // side == 1;
 void ramp_up();
 void ramp_down();
-
 // side == 2;
 void blk_magnet_identify()
 {
-    if (hall <= 5) // the threshold value here requires measurement & calibration
-    {
-        // magnet is detected in the blk
-        flag_magnet = 1;
-        box_intend = 3; // blk is to be delivered in the red box
-
-        // light up the red LED for 5 sec
-        digitalWrite(ledR_pn, HIGH);
-        delay(5000);
-    }
-    else
-    {
-        // no magnet in the blk
-        flag_magnet = 0;
-        box_intend = 1; // blk is to be delivered in the green box
-
-        // light up the green LED for 5 sec
-        digitalWrite(ledG_pn, HIGH);
-        delay(5000);
-    }
+  // if reading is non-zero, it is a magnet
+  if (hall !=0){
+    // magnet is detected
+    flag_magnet = 1;
+    box_intend = 3; // blk is to be delivered in the red box
+    // light up the red LED for 5 sec
+    digitalWrite(ledR_pn, HIGH);
+    delay(5000); // wait 5 seconds
+  }
+  else {
+      // no magnet
+      flag_magnet = 0;
+      box_intend = 1; // blk is to be delivered in the green box
+      // light up the green LED for 5 sec
+      digitalWrite(ledG_pn, HIGH);
+      delay(5000);
+  }
 }
 
 void blk_collect()
 {
+  // move forward slowly until LDR/touch sensor reaches blk (detects no more light)
     while (ldr >= 0) // the threshold value here requires measurement & calibration
     {
         // continue to approach the blk until it touches.
