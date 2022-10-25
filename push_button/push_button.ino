@@ -1,4 +1,4 @@
-#define BUTTON_PIN 2
+#define button_pn 2
 byte lastButtonState = LOW;
 unsigned long debounceDuration = 50; // millis
 unsigned long lastTimeButtonStateChanged = 0;
@@ -6,11 +6,11 @@ bool flag_onoff= false;
 
 void setup() {
   Serial.begin(9600);
-  pinMode(BUTTON_PIN, INPUT);
+  pinMode(button_pn, INPUT);
 }
 void loop() {
   if (millis() - lastTimeButtonStateChanged > debounceDuration) {
-    byte buttonState = digitalRead(BUTTON_PIN);
+    byte buttonState = digitalRead(button_pn);
     if (buttonState != lastButtonState) {
       lastTimeButtonStateChanged = millis();
       lastButtonState = buttonState;
