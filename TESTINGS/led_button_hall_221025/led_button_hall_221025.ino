@@ -34,7 +34,7 @@ int motor_speed = 250;
 
 
 // Sensor Values
-int ldr, l0, l1, l2, l3, ir1, ir2, hall;
+int ldr, l0, l1, l2, l3, ir1, ir2, hall, push;
 float us1_distance, us2_distance;
 float ir1_avg, ir2_avg, us1_avg, us2_avg;
 int duration_steer; // require testing to determine value
@@ -102,10 +102,26 @@ void setup(){
 
 void loop(){
   //update all sensor readings & determine which side we're on
-  sensor_read();
+  update_onoff();
+//  sensor_read();
+  hall = digitalRead(hall_pn);
+  Serial.print("hall effect: ");
+  Serial.println(hall);
 
-  // }
-  
+  if (flag_onoff == true){
+    ledA_flash();
+    if (hall > 400) {
+      digitalWrite(ledR_pn, HIGH);
+    }
+    else {
+      digitalWrite(ledR_pn, LOW);
+    }
+  }
+
+
+  else {
+    digitalWrite(ledA_pn, LOW);
+  }
 
 }
 
@@ -130,6 +146,7 @@ void move_forward(int speedR, int speedL)
   Lwheel->run(FORWARD);
   Lwheel->setSpeed(speedL);
 }
+
 void adjust_left()
 {
   flag_nav = 'L';
@@ -138,6 +155,7 @@ void adjust_left()
   Lwheel->run(BACKWARD);
   Lwheel->setSpeed(motor_speed);
 }
+
 void adjust_right()
 {
   flag_nav = 'R';
@@ -154,6 +172,7 @@ void stop_move()
   Lwheel->run(RELEASE);
   Lwheel->setSpeed(0);
 }
+
 void turn_90left()
 {
   Rwheel->run(FORWARD);
@@ -162,6 +181,7 @@ void turn_90left()
   Lwheel->setSpeed(0);
   delay(duration_steer);
 }
+
 void turn_90right()
 {
   Rwheel->run(RELEASE);
