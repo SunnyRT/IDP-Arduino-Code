@@ -64,13 +64,9 @@ void ramp_up();
 void ramp_down();
 
 // side == 2;
-void blk_fn();
-
-void blk_approach();
 void blk_magnet_identify();
-void blk_magnet_indicate();
 void blk_collect();
-void blk_retriet();
+
 
 // side == 3;
 void tunnel();

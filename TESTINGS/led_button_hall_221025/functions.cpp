@@ -56,14 +56,14 @@ void sensor_read()
   l1 = digitalRead(l1_pn);
   l2 = digitalRead(l2_pn);
   // l3 = digitalRead(l3_pn);
-  // us1_distance = us_measure(us1T_pn, us1E_pn);
-  // us2_distance = us_measure(us2T_pn, us2E_pn);
+  us1_distance = us_measure(us1T_pn, us1E_pn);
+  us2_distance = us_measure(us2T_pn, us2E_pn);
 
-  // // calculate averages for distance readings
-  // ir1_avg = moving_avg(ir1);
-  // ir2_avg = moving_avg(ir2);
-  // us1_avg = moving_avg(us1_distance);
-  // us2_avg = moving_avg(us2_distance);
+  // calculate averages for distance readings
+  ir1_avg = moving_avg(ir1);
+  ir2_avg = moving_avg(ir2);
+  us1_avg = moving_avg(us1_distance);
+  us2_avg = moving_avg(us2_distance);
 
   //  //identify which side we are on:
   //  side_identify(us1_avg); //Change depending on which sensor is on the right
@@ -128,11 +128,6 @@ void ramp_up();
 void ramp_down();
 
 // side == 2;
-void blk_fn();
-
-
-
-
 void blk_magnet_identify()
 {
     if (hall <= 5) // the threshold value here requires measurement & calibration
@@ -174,6 +169,7 @@ void blk_collect()
 
     flag_blk = true; //the blk has been collected
 }
+
 
 // side == 3;
 void tunnel(); // done --> tunnel PID control
