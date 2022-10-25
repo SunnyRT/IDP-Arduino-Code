@@ -34,7 +34,7 @@ int motor_speed = 250;
 
 
 // Sensor Values
-int ldr, l0, l1, l2, l3, ir1, ir2, hall, push;
+int ldr, l0, l1, l2, l3, ir1, ir2, hall;
 float us1_distance, us2_distance;
 float ir1_avg, ir2_avg, us1_avg, us2_avg;
 int duration_steer; // require testing to determine value
@@ -43,6 +43,11 @@ int duration_steer; // require testing to determine value
 byte lastButtonState = LOW;
 unsigned long debounceDuration = 50; // millis
 unsigned long lastTimeButtonStateChanged = 0;
+
+//ledA_flash variables
+int ledAState = LOW;  // ledState used to set the LED
+unsigned long previousMillis = 0;  // will store last time LED was updated
+const long interval = 250;  // 2hz --> 0.5 second interval at which to blink (milliseconds)
 
 // array of averages
 float ir1_avg_arr[10]; // 10=window size for moving average
@@ -125,7 +130,6 @@ void move_forward(int speedR, int speedL)
   Lwheel->run(FORWARD);
   Lwheel->setSpeed(speedL);
 }
-
 void adjust_left()
 {
   flag_nav = 'L';
@@ -134,7 +138,6 @@ void adjust_left()
   Lwheel->run(BACKWARD);
   Lwheel->setSpeed(motor_speed);
 }
-
 void adjust_right()
 {
   flag_nav = 'R';
@@ -151,7 +154,6 @@ void stop_move()
   Lwheel->run(RELEASE);
   Lwheel->setSpeed(0);
 }
-
 void turn_90left()
 {
   Rwheel->run(FORWARD);
@@ -160,7 +162,6 @@ void turn_90left()
   Lwheel->setSpeed(0);
   delay(duration_steer);
 }
-
 void turn_90right()
 {
   Rwheel->run(RELEASE);

@@ -7,7 +7,7 @@
 
 // Global Variables ===================================================
 
-extern const int ldr_pn, hall_pn, ir1_pn, ir2_pn, push_pn;
+extern const int ldr_pn, hall_pn, ir1_pn, ir2_pn, button_pn;
 extern const int l0_pn, l1_pn, l2_pn, l3_pn, us1E_pn, us1T_pn;
 extern const int ledG_pn, ledA_pn, ledR_pn, servo1_pn;
 extern const int us2E_pn, us2T_pn;
@@ -25,6 +25,12 @@ extern unsigned long debounceDuration; // millis
 extern unsigned long lastTimeButtonStateChanged;
 extern bool onoff;
 
+//ledA_flash variables
+extern int ledAState;  // ledState used to set the LED
+extern unsigned long previousMillis;  // will store last time LED was updated
+extern const long interval;  // 2hz --> 0.5 second interval at which to blink (milliseconds)
+
+
 // flags
 extern int count;
 extern bool flag_onoff;
@@ -41,6 +47,7 @@ float us_measure();
 float moving_avg();
 bool update_onoff();
 void line_follow();
+void ledA_flash();
 void stop_move();
 void move_forward();
 void move_backward();
