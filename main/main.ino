@@ -12,7 +12,7 @@ const int hall_pn = A1;
 const int ir1_pn = A4; // short range
 const int ir2_pn = A5; // long range
 //Digital:
-const int push_pn=1; //ideally not use pin 1 (move to 5?)
+const int button_pn=2; 
 const int l0_pn=3; //left
 const int l1_pn=4; //right
 const int l2_pn=5; //far right (for juntion counting)
@@ -79,6 +79,7 @@ int box_intend;
 void setup(){
   Serial.begin(9600);
   // set pins as inputs
+  pinMode(button_pn, INPUT);
   pinMode(ldr_pn, INPUT);
   pinMode(hall_pn, INPUT);
   pinMode(ir1_pn, INPUT); 
@@ -86,7 +87,6 @@ void setup(){
   pinMode(l0_pn, INPUT);
   pinMode(l1_pn, INPUT);
   pinMode(l2_pn, INPUT);
-  pinMode(l3_pn, INPUT);
   pinMode(us1E_pn, INPUT);
   pinMode(us1T_pn, OUTPUT);
   pinMode(ledG_pn, OUTPUT);
