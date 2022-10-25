@@ -130,11 +130,50 @@ void ramp_down();
 // side == 2;
 void blk_fn();
 
-void blk_approach();
-void blk_magnet_identify();
-void blk_magnet_indicate();
-void blk_collect();
-void blk_retriet();
+
+
+
+void blk_magnet_identify()
+{
+    if (hall <= 5) // the threshold value here requires measurement & calibration
+    {
+        // magnet is detected in the blk
+        flag_magnet = 1;
+        box_intend = 3; // blk is to be delivered in the red box
+
+        // light up the red LED for 5 sec
+        digitalWrite(ledR_pn, HIGH);
+        delay(5000);
+    }
+    else
+    {
+        // no magnet in the blk
+        flag_magnet = 0;
+        box_intend = 1; // blk is to be delivered in the green box
+
+        // light up the green LED for 5 sec
+        digitalWrite(ledG_pn, HIGH);
+        delay(5000);
+    }
+}
+
+void blk_collect()
+{
+    while (ldr >= 0) // the threshold value here requires measurement & calibration
+    {
+        // continue to approach the blk until it touches.
+        line_follow();
+    }
+
+    // touch the blk i.e. distance = 0 from the blk
+    stop_move();
+
+    // move the claw by the servo to trap the blk
+    servo_claw.write(180); // the value here requires alibration
+    delay(1000);
+
+    flag_blk = true; //the blk has been collected
+}
 
 // side == 3;
 void tunnel(); // done --> tunnel PID control

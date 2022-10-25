@@ -82,6 +82,3 @@ void blk_collect()
     flag_blk = true; //the blk has been collected
 }
 
-
-void blk_approach();
-void blk_retriet();
