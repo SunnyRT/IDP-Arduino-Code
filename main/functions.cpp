@@ -7,16 +7,17 @@
 // calculate distance from ultrasonic sensors
 float us_measure(int trig_pin, int echo_pin)
 {
-  // generate 10-microsecond pulse to TRIG pin
+  digitalWrite(trig_pin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
   digitalWrite(trig_pin, HIGH);
   delayMicroseconds(10);
   digitalWrite(trig_pin, LOW);
-  // measure duration of pulse from ECHO pin
+  // Reads the echoPin, returns the sound wave travel time in microseconds
   float duration_us = pulseIn(echo_pin, HIGH);
   // return distance (*v_sound /2)
   return duration_us * 0.017;
 }
-
 float moving_avg(float new_reading)
 {
 
