@@ -34,7 +34,6 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 int ldr, l0, l1, l2, l3, ir1, ir2, hall, push;
 float us1_distance, us2_distance;
 float ir1_avg, ir2_avg, us1_avg, us2_avg;
-int motor_speed = 250;
 int duration_steer; // require testing to determine value
 int lastError = 0;  // for us PID control
 
@@ -60,20 +59,6 @@ bool flag_blk;
 bool flag_magnet;
 int box_intend;
 
-// Local variables
-/*************************************************************************
- * PID control system variables
- *************************************************************************/
-float Kp = 0; // related to the proportional control term;
-              // change the value by trial-and-error (ex: 0.07).
-float Ki = 0; // related to the integral control term;
-              // change the value by trial-and-error (ex: 0.0008).
-float Kd = 0; // related to the derivative control term;
-              // change the value by trial-and-error (ex: 0.6).
-int P;
-int I;
-int D;
-
 void setup()
 {
   Serial.begin(9600);
@@ -86,7 +71,6 @@ void setup()
   pinMode(l0_pn, INPUT);
   pinMode(l1_pn, INPUT);
   pinMode(l2_pn, INPUT);
-  pinMode(l3_pn, INPUT);
   pinMode(us1E_pn, INPUT);
   pinMode(us1T_pn, OUTPUT);
   pinMode(ledG_pn, OUTPUT);
@@ -102,12 +86,23 @@ void loop()
 {
   // update all sensor readings & determine which side we're on
   sensor_read(); // obtain us1_avg
-  Serial.print("us readings: ")
+  Serial.print("us readings: ");
   Serial.println(us1_avg);
-  Serial.print("error: ")
-  Serial.println(error);
+  Serial.println(us1_distance);
+  Serial.print("error: ");
+  Serial.println(lastError);
   tunnel_PID_control();
 }
+
+
+
+
+
+
+
+
+
+
 
 void tunnel_PID_control()
 {
@@ -119,6 +114,20 @@ void tunnel_PID_control()
   const int maxspeedL = 150;
   const int basespeedR = 100;
   const int basespeedL = 100;
+
+  // Local variables
+  /*************************************************************************
+   * PID control system variables
+   *************************************************************************/
+  float Kp = 1; // related to the proportional control term;
+                // change the value by trial-and-error (ex: 0.07).
+  float Ki = 1; // related to the integral control term;
+                // change the value by trial-and-error (ex: 0.0008).
+  float Kd = 1; // related to the derivative control term;
+                // change the value by trial-and-error (ex: 0.6).
+  int P;
+  int I;
+  int D;
 
   int error = 5.0 - us1_avg; // 5.0 is the ideal distance from the tunnel wall
 
@@ -149,7 +158,63 @@ void tunnel_PID_control()
     motorspeedL = 0;
   }
   move_forward(motorspeedR, motorspeedL);
-  Serial.print("motorspeed: ")
+  Serial.print("motorspeed: ");
   Serial.print(motorspeedR);
   Serial.println(motorspeedL);
+}
+
+/*******************************************************************************
+ * functions on motor
+ *******************************************************************************/
+void move_forward(int speedR, int speedL)
+{
+  flag_nav = 'F';
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(speedR);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(speedL);
+}
+
+void adjust_left()
+{
+  flag_nav = 'L';
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(BACKWARD);
+  Lwheel->setSpeed(motor_speed);
+}
+
+void adjust_right()
+{
+  flag_nav = 'R';
+  Rwheel->run(BACKWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(motor_speed);
+}
+void stop_move()
+{
+  flag_nav = 'P';
+  Rwheel->run(RELEASE);
+  Rwheel->setSpeed(0);
+  Lwheel->run(RELEASE);
+  Lwheel->setSpeed(0);
+}
+
+void turn_90left()
+{
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(RELEASE);
+  Lwheel->setSpeed(0);
+  delay(duration_steer);
+}
+
+void turn_90right()
+{
+  Rwheel->run(RELEASE);
+  Rwheel->setSpeed(0);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(motor_speed);
+  delay(duration_steer);
 }
