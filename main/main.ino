@@ -95,6 +95,7 @@ void setup(){
   pinMode(servo1_pn, OUTPUT);
   pinMode(us2E_pn, INPUT);
   pinMode(us2T_pn, OUTPUT);
+  AFMS.begin(); // Connect to the controller
 }
 
 void loop(){

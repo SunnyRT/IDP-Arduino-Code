@@ -10,7 +10,7 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 
 /*defining pins and variables*/
 
-#define BUTTON_PIN 2 // switch
+#define button_pn 2 // switch
 #define l0_pn 3      // left
 #define l1_pn 4      // right
 #define l2_pn 5      // far right
@@ -31,7 +31,7 @@ unsigned long lastTimeButtonStateChanged = 0;
 
 void setup()
 {
-    pinMode(BUTTON_PIN, INPUT);
+    pinMode(button_pn, INPUT);
     pinMode(l0_pn, INPUT); // light sensor on the left
     pinMode(l1_pn, INPUT); // light sensor on the right
     pinMode(l2_pn, INPUT); // light sensor on the far right
@@ -60,7 +60,7 @@ void loop()
     // button debounce
     if (millis() - lastTimeButtonStateChanged > debounceDuration)
     {
-        byte buttonState = digitalRead(BUTTON_PIN);
+        byte buttonState = digitalRead(button_pn);
         if (buttonState != lastButtonState)
         {
             lastTimeButtonStateChanged = millis();
