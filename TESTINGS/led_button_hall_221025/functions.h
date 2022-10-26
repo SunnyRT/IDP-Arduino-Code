@@ -39,6 +39,11 @@ extern bool flag_line;
 extern char flag_nav; 
 extern int flag_side; 
 
+extern bool flag_blk;
+extern bool flag_magnet;
+extern int box_intend;
+
+
 //=============================================================
 
 // global
@@ -64,8 +69,7 @@ void ramp_up();
 void ramp_down();
 
 // side == 2;
-void blk_magnet_identify();
-void blk_collect();
+void blk_fn();
 
 
 // side == 3;
