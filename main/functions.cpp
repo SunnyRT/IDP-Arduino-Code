@@ -113,17 +113,17 @@ void ledA_flash()
 
 void line_follow()
 {
-  if (l2 == LOW && flag_nav != 'P')
+  if (l2 == HIGH && flag_nav != 'P')
   {
     Serial.println("Junctions detected!");
     stop_move();
     delay(1000);
   }
 
-  else if (l2 == HIGH)
+  else if (l2 == LOW)
   {
     // neither l0 or l1 detects the line
-    if ((l0 == HIGH && l1 == HIGH) && flag_nav != 'F')
+    if ((l0 == LOW && l1 == LOW) && flag_nav != 'F')
     {
       // forward
       move_forward();
@@ -131,21 +131,21 @@ void line_follow()
     }
 
     // l0 detects the line
-    else if ((l0 == LOW && l1 == HIGH) && flag_nav != 'L')
+    else if ((l0 == HIGH && l1 == LOW) && flag_nav != 'L')
     {
       // adjust left slightly
       adjust_left();
     }
 
     // l1 detects the line
-    else if ((l0 == HIGH && l1 == LOW) && flag_nav != 'R')
+    else if ((l0 == LOW && l1 == HIGH) && flag_nav != 'R')
     {
       // adjust right slightly
       adjust_right();
     }
 
     // l0 and l1 both detect the line
-    else if ((l0 == LOW && l1 == LOW) && flag_nav != 'P')
+    else if ((l0 == HIGH && l1 == HIGH) && flag_nav != 'P')
     {
       // forward
       stop_move();
@@ -207,7 +207,6 @@ void blk_fn()
 
   flag_blk = true; // the blk has been collected
 }
-
 
 // side == 3;
 void tunnel(); // done --> tunnel PID control
