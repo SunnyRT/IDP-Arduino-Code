@@ -104,24 +104,28 @@ void loop(){
   //update all sensor readings & determine which side we're on
   update_onoff();
 //  sensor_read();
+  ldr = analogRead(ldr_pn);
   hall = digitalRead(hall_pn);
+  Serial.print("ldr: ");
+  Serial.println(ldr);
   Serial.print("hall effect: ");
   Serial.println(hall);
 
   if (flag_onoff == true){
-    ledA_flash();
-    if (hall > 400) {
-      digitalWrite(ledR_pn, HIGH);
+    ledA_flash(); // flash the amble LED at 2Hz frequency;
+
+    if (ldr <= 600) // ldr == 900 for not touching the blk
+    {
+//      line_follow(); // continue to move forward (towards the block) until ldr changes to 500
+      Serial.print("moving forwawrd....");
     }
     else {
-      digitalWrite(ledR_pn, LOW);
+      Serial.print("block found!!");
+      blk_fn(); //start detecting the 
     }
   }
 
 
-  else {
-    digitalWrite(ledA_pn, LOW);
-  }
 
 }
 
