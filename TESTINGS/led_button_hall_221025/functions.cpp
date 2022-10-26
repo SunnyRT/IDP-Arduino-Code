@@ -5,6 +5,27 @@
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 #include <Servo.h> 
 
+
+// Push button to turn robot on or off
+bool update_onoff() {
+  if (millis() - lastTimeButtonStateChanged > debounceDuration)
+  {
+    byte buttonState = digitalRead(button_pn);
+    if (buttonState != lastButtonState)
+    {
+      lastTimeButtonStateChanged = millis();
+      lastButtonState = buttonState;
+      if (buttonState == LOW)
+      {
+        // do an action, for example print on Serial
+        Serial.println("Button released");
+        flag_onoff = !flag_onoff;
+      }
+    }
+  }
+  Serial.println(flag_onoff);
+}
+
 // calculate distance from ultrasonic sensors
 void us_measure()
 {
@@ -24,30 +45,31 @@ void us_measure()
   us1_distance = us1_duration * 0.017;
   us2_distance = us2_duration * 0.017;
 }
+
 float moving_avg(float new_reading)
 {
-
-  const int nvalues = 20;     // Moving average window size
-  static int current = 0;     // Index for current value
-  static int value_count = 0; // Count of values read (<= nvalues)
+  const int window_size = 20;     // Moving average window size
+  
+  static int current_index = 0;     // Index for current value
   static float sum = 0;       // Rolling sum
-  static float values[nvalues];
+  static float values_array[window_size]; //array
+  float average = 0.0;
 
-  sum += new_reading;
+  // remove oldest value
+  sum -= values_array[current_index];
+  // replace oldest with new reading
+  sum[current_index] = new_reading;
+  sum =+ new_reading;
 
-  // If the window is full, adjust the sum by deleting the oldest value
-  if (value_count == nvalues)
-    sum -= values[current];
+  // move to next position (which is now the oldest value) in array
+  current_index =+ 1;
 
-  values[current] = new_reading; // Replace the oldest with the latest
-
-  if (++current >= nvalues)
-    current = 0;
-
-  if (value_count < nvalues)
-    value_count += 1;
-
-  return sum / value_count;
+  // if this is the last position in array
+  if(current_index==window_size){ 
+    current_index = 0; // wrap round to start of window szie
+  }
+  // return average
+  return sum/window_size
 }
 
 // collects sensor readings (will be run every loop)
@@ -66,25 +88,6 @@ void sensor_read()
   ir2_avg = moving_avg(ir2);
 };
 
-bool update_onoff()
-{
-  if (millis() - lastTimeButtonStateChanged > debounceDuration)
-  {
-    byte buttonState = digitalRead(button_pn);
-    if (buttonState != lastButtonState)
-    {
-      lastTimeButtonStateChanged = millis();
-      lastButtonState = buttonState;
-      if (buttonState == LOW)
-      {
-        // do an action, for example print on Serial
-        Serial.println("Button released");
-        flag_onoff = !flag_onoff;
-      }
-    }
-  }
-  Serial.println(flag_onoff);
-}
 
 // amber LED flashes at 2Hz while robot is running
 void ledA_flash()
