@@ -38,6 +38,7 @@ int ldr, l0, l1, l2, l3, ir1, ir2, hall;
 float us1_distance, us2_distance;
 float ir1_avg, ir2_avg, us1_avg, us2_avg;
 int duration_steer; // require testing to determine value
+int lastError = 0;  // for us PID control
 
 // button debounce variables
 byte lastButtonState = LOW;

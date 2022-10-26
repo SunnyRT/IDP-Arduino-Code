@@ -4,6 +4,11 @@
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 
+// Setup the motor
+Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
+Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIGHT
+Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
+
 // Pins Set-up:
 // Analog:
 const int ldr_pn = A0;
@@ -25,13 +30,9 @@ const int us2E_pn = 12;
 const int us2T_pn = 13;
 int motor_speed = 250;
 
-// Setup the motor
-Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
-Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIGHT
-Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 
 // Sensor Values
-int ldr, l0, l1, l2, l3, ir1, ir2, hall, push;
+int ldr, l0, l1, l2, l3, ir1, ir2, hall;
 float us1_distance, us2_distance;
 float ir1_avg, ir2_avg, us1_avg, us2_avg;
 int duration_steer; // require testing to determine value
@@ -41,6 +42,11 @@ int lastError = 0;  // for us PID control
 byte lastButtonState = LOW;
 unsigned long debounceDuration = 50; // millis
 unsigned long lastTimeButtonStateChanged = 0;
+
+//ledA_flash variables
+int ledAState = LOW;  // ledState used to set the LED
+unsigned long previousMillis = 0;  // will store last time LED was updated
+const long interval = 250;  // 2hz --> 0.5 second interval at which to blink (milliseconds)
 
 // array of averages
 float ir1_avg_arr[10]; // 10=window size for moving average
@@ -85,9 +91,8 @@ void setup()
 void loop()
 {
   // update all sensor readings & determine which side we're on
-  sensor_read(); // obtain us1_avg
+  us_measure(); // obtain us1_avg
   Serial.print("us readings: ");
-  Serial.println(us1_avg);
   Serial.println(us1_distance);
   Serial.print("error: ");
   Serial.println(lastError);
@@ -163,58 +168,3 @@ void tunnel_PID_control()
   Serial.println(motorspeedL);
 }
 
-/*******************************************************************************
- * functions on motor
- *******************************************************************************/
-void move_forward(int speedR, int speedL)
-{
-  flag_nav = 'F';
-  Rwheel->run(FORWARD);
-  Rwheel->setSpeed(speedR);
-  Lwheel->run(FORWARD);
-  Lwheel->setSpeed(speedL);
-}
-
-void adjust_left()
-{
-  flag_nav = 'L';
-  Rwheel->run(FORWARD);
-  Rwheel->setSpeed(motor_speed);
-  Lwheel->run(BACKWARD);
-  Lwheel->setSpeed(motor_speed);
-}
-
-void adjust_right()
-{
-  flag_nav = 'R';
-  Rwheel->run(BACKWARD);
-  Rwheel->setSpeed(motor_speed);
-  Lwheel->run(FORWARD);
-  Lwheel->setSpeed(motor_speed);
-}
-void stop_move()
-{
-  flag_nav = 'P';
-  Rwheel->run(RELEASE);
-  Rwheel->setSpeed(0);
-  Lwheel->run(RELEASE);
-  Lwheel->setSpeed(0);
-}
-
-void turn_90left()
-{
-  Rwheel->run(FORWARD);
-  Rwheel->setSpeed(motor_speed);
-  Lwheel->run(RELEASE);
-  Lwheel->setSpeed(0);
-  delay(duration_steer);
-}
-
-void turn_90right()
-{
-  Rwheel->run(RELEASE);
-  Rwheel->setSpeed(0);
-  Lwheel->run(FORWARD);
-  Lwheel->setSpeed(motor_speed);
-  delay(duration_steer);
-}

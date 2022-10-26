@@ -20,8 +20,8 @@ void us_measure()
   float us1_duration = pulseIn(us1E_pn, HIGH);
   float us2_duration = pulseIn(us2E_pn, HIGH);
   // get distance values(*v_sound /2)
-  us1_distance= us1_duration * 0.017;
-  us2_distance= us2_duration * 0.017; 
+  us1_distance = us1_duration * 0.017;
+  us2_distance = us2_duration * 0.017;
 }
 float moving_avg(float new_reading)
 {
@@ -60,7 +60,7 @@ void sensor_read()
   l0 = digitalRead(l0_pn);
   l1 = digitalRead(l1_pn);
   l2 = digitalRead(l2_pn);
-  us_measure(); 
+  us_measure();
   ir1_avg = moving_avg(ir1);
   ir2_avg = moving_avg(ir2);
 };
@@ -85,10 +85,7 @@ bool update_onoff()
   Serial.println(flag_onoff);
 }
 
-void line_follow(){
-    // copy content in line_follow_v2.ino here
-};
-
+// amber LED flashes at 2Hz while robot is running
 void ledA_flash()
 {
   // check to see if it's time to blink the LED; that is, if the difference
@@ -100,18 +97,136 @@ void ledA_flash()
     // save the last time you blinked the LED
     previousMillis = currentMillis;
     // toggle LED
-    if (ledAState == LOW){
+    if (ledAState == LOW)
+    {
       ledAState = HIGH;
     }
-    else{
+    else
+    {
       ledAState = LOW;
     }
     // set the LED with the ledState of the variable:
     digitalWrite(ledA_pn, ledAState);
   }
 }
+
+
+
+
+void line_follow()
+{
+  if (l2 == LOW && flag_nav != 'P')
+  {
+    Serial.println("Junctions detected!");
+    stop_move();
+    delay(1000);
+  }
+
+  else if (l2 == HIGH)
+  {
+    // neither l0 or l1 detects the line
+    if ((l0 == HIGH && l1 == HIGH) && flag_nav != 'F')
+    {
+      // forward
+      move_forward();
+      Serial.println("MOVE FORWARD!");
+    }
+
+    // l0 detects the line
+    else if ((l0 == LOW && l1 == HIGH) && flag_nav != 'L')
+    {
+      // adjust left slightly
+      adjust_left();
+    }
+
+    // l1 detects the line
+    else if ((l0 == HIGH && l1 == LOW) && flag_nav != 'R')
+    {
+      // adjust right slightly
+      adjust_right();
+    }
+
+    // l0 and l1 both detect the line
+    else if ((l0 == LOW && l1 == LOW) && flag_nav != 'P')
+    {
+      // forward
+      stop_move();
+    }
+  }
+}
+
+/*******************************************************************************
+ * functions on motor
+ *******************************************************************************/
+void move_forward(int speedR, int speedL)
+{
+  flag_nav = 'F';
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(speedR);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(speedL);
+}
+
+void adjust_left()
+{
+  flag_nav = 'L';
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(BACKWARD);
+  Lwheel->setSpeed(motor_speed);
+}
+
+void adjust_right()
+{
+  flag_nav = 'R';
+  Rwheel->run(BACKWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(motor_speed);
+}
+void stop_move()
+{
+  flag_nav = 'P';
+  Rwheel->run(RELEASE);
+  Rwheel->setSpeed(0);
+  Lwheel->run(RELEASE);
+  Lwheel->setSpeed(0);
+}
+
+void turn_90left()
+{
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(RELEASE);
+  Lwheel->setSpeed(0);
+  delay(duration_steer);
+}
+
+void turn_90right()
+{
+  Rwheel->run(RELEASE);
+  Rwheel->setSpeed(0);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(motor_speed);
+  delay(duration_steer);
+}
+/*******************************************************************************
+ *******************************************************************************/
+
 // side == 0;
-void start_route(); // done
+void start_route()
+{
+  if (l0 == HIGH && l1 == HIGH && l2 == HIGH && flag_nav != 'F')
+  {
+    move_forward();
+  }
+  else if ((l0 == LOW && l1 == LOW) || l2 == LOW)
+  {
+    turn_90right();
+    flag_started = true; // exit start_route
+  }
+}
+
 // side == 1;
 void ramp_up();
 void ramp_down();
@@ -149,8 +264,6 @@ void blk_fn()
 
   flag_blk = true; // the blk has been collected
 }
-
-
 
 // side == 3;
 void tunnel(); // done --> tunnel PID control
