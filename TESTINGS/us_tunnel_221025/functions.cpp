@@ -3,6 +3,7 @@
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
+#include <Servo.h> 
 
 // calculate distance from ultrasonic sensors
 void us_measure()
@@ -155,63 +156,7 @@ void line_follow()
   }
 }
 
-/*******************************************************************************
- * functions on motor
- *******************************************************************************/
-void move_forward(int speedR, int speedL)
-{
-  flag_nav = 'F';
-  Rwheel->run(FORWARD);
-  Rwheel->setSpeed(speedR);
-  Lwheel->run(FORWARD);
-  Lwheel->setSpeed(speedL);
-}
 
-void adjust_left()
-{
-  flag_nav = 'L';
-  Rwheel->run(FORWARD);
-  Rwheel->setSpeed(motor_speed);
-  Lwheel->run(BACKWARD);
-  Lwheel->setSpeed(motor_speed);
-}
-
-void adjust_right()
-{
-  flag_nav = 'R';
-  Rwheel->run(BACKWARD);
-  Rwheel->setSpeed(motor_speed);
-  Lwheel->run(FORWARD);
-  Lwheel->setSpeed(motor_speed);
-}
-void stop_move()
-{
-  flag_nav = 'P';
-  Rwheel->run(RELEASE);
-  Rwheel->setSpeed(0);
-  Lwheel->run(RELEASE);
-  Lwheel->setSpeed(0);
-}
-
-void turn_90left()
-{
-  Rwheel->run(FORWARD);
-  Rwheel->setSpeed(motor_speed);
-  Lwheel->run(RELEASE);
-  Lwheel->setSpeed(0);
-  delay(duration_steer);
-}
-
-void turn_90right()
-{
-  Rwheel->run(RELEASE);
-  Rwheel->setSpeed(0);
-  Lwheel->run(FORWARD);
-  Lwheel->setSpeed(motor_speed);
-  delay(duration_steer);
-}
-/*******************************************************************************
- *******************************************************************************/
 
 // side == 0;
 void start_route()
@@ -230,7 +175,10 @@ void start_route()
 // side == 1;
 void ramp_up();
 void ramp_down();
-// side == 2;
+
+
+
+// side == 2 
 void blk_fn()
 {
   // ensunre the car is not stationary.
@@ -259,7 +207,7 @@ void blk_fn()
 
   // blk collection
   // move the claw by the servo to trap the blk
-  servo_claw.write(180); // the value here requires alibration
+  blk_collect();
   delay(1000);
 
   flag_blk = true; // the blk has been collected

@@ -3,11 +3,16 @@
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
+#include <Servo.h> 
 
 /* setup the motor and create the DC motor object*/
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
 Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIHGT
 Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
+int motor_speed = 250;
+
+// setup servo object
+Servo servo_claw; 
 
 // Pins Set-up:
 //Analog:
@@ -28,7 +33,6 @@ const int ledR_pn=10;
 const int servo1_pn=11;
 const int us2E_pn=12;
 const int us2T_pn=13;
-int motor_speed = 250;
 
 
 
@@ -62,19 +66,17 @@ bool flag_onoff = false;
 bool flag_started;
 bool flag_line;
 int flag_side; 
-
-
-
 char flag_nav; 
   //"P": stop
   //"L": adjust left
   //"R": adjust right
   //"B": backwards
   //"F": forwards
-
 bool flag_blk;
 bool flag_magnet;
 int box_intend;
+
+
 
 
 
@@ -98,7 +100,8 @@ void setup(){
   pinMode(servo1_pn, OUTPUT);
   pinMode(us2E_pn, INPUT);
   pinMode(us2T_pn, OUTPUT);
-  AFMS.begin(); // Connect to the controller
+  AFMS.begin(); // Connect to the motor controller
+  servo_claw.attach(servo1_pn);  // connect to servo
 }
 
 void loop(){
@@ -170,4 +173,13 @@ void turn_90right()
   Lwheel->run(FORWARD);
   Lwheel->setSpeed(motor_speed);
   delay(duration_steer);
+}
+
+
+
+/*******************************************************************************
+ * functions on servo
+ *******************************************************************************/
+void blk_collect(){
+  servo_claw.write(180); // the value here requires calibration
 }

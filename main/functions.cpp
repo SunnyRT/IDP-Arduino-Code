@@ -3,6 +3,7 @@
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
+#include <Servo.h> 
 
 // calculate distance from ultrasonic sensors
 void us_measure()
@@ -203,7 +204,7 @@ void blk_fn()
 
   // blk collection
   // move the claw by the servo to trap the blk
-  servo_claw.write(180); // the value here requires alibration
+  blk_collect();
   delay(1000);
 
   flag_blk = true; // the blk has been collected
