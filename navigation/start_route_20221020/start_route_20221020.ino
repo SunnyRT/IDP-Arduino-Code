@@ -1,7 +1,7 @@
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
-#include "functions.h"
+//#include "functions.h"
 
 /* setup the motor and create the DC motor object*/
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
@@ -10,10 +10,10 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 
 /*defining pins and variables*/
 
-#define button_pn 2 // switch
-#define l0_pn 3      // left
-#define l1_pn 4      // right
-#define l2_pn 5      // far right
+#define button_pn 1 // switch
+#define l0_pn 2      // left
+#define l1_pn 3      // right
+#define l2_pn 4      // far right
 
 // Variables will change:
 bool flag_started = false;
@@ -78,15 +78,15 @@ void loop()
 
     if (flag_onoff == false && flag_nav != 'P')
     {
-        flag_line = false;
+//        flag_line = false;
         stop_move();
     }
 
     else if (flag_onoff == true && flag_started == false)
     {
-        flag_line = false;
+//        flag_line = false;
         start_route();
-        flag_line = true; //back onto the line after start_route completed i.e. started
+//        flag_line = true; //back onto the line after start_route completed i.e. started
     }
     else if (flag_onoff == true && flag_started == true)
     {
