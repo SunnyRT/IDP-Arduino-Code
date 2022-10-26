@@ -3,7 +3,7 @@
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
-#include <Servo.h> 
+#include <Servo.h>
 
 // calculate distance from ultrasonic sensors
 void us_measure()
@@ -111,9 +111,6 @@ void ledA_flash()
   }
 }
 
-
-
-
 void line_follow()
 {
   if (l2 == LOW && flag_nav != 'P')
@@ -156,8 +153,6 @@ void line_follow()
   }
 }
 
-
-
 // side == 0;
 void start_route()
 {
@@ -176,12 +171,13 @@ void start_route()
 void ramp_up();
 void ramp_down();
 // side == 2;
+
 void blk_fn()
 {
   // ensunre the car is not stationary.
   stop_move();
   // magnetc identification
-  if (hall < 400) // hall == 0 if magnet is present
+  if (hall != 0) // hall == 1 if magnet is present
   {
     // magnet is detected in the blk
     flag_magnet = 1;
@@ -190,8 +186,9 @@ void blk_fn()
     // light up the red LED for 5 sec
     digitalWrite(ledR_pn, HIGH);
     delay(5000);
+    digitalWrite(ledR_pn, LOW);
   }
-  else // hall == 900 if magnet is not present
+  else // hall == 0 if magnet is not present
   {
     // no magnet in the blk
     flag_magnet = 0;
@@ -200,6 +197,7 @@ void blk_fn()
     // light up the green LED for 5 sec
     digitalWrite(ledG_pn, HIGH);
     delay(5000);
+    digitalWrite(ledG_pn, LOW);
   }
 
   // blk collection
@@ -209,6 +207,7 @@ void blk_fn()
 
   flag_blk = true; // the blk has been collected
 }
+
 
 // side == 3;
 void tunnel(); // done --> tunnel PID control

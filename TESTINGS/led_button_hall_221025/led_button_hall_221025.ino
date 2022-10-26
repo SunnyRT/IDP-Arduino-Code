@@ -3,11 +3,15 @@
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
+#include <Servo.h> 
 
 /* setup the motor and create the DC motor object*/
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
 Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIHGT
 Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
+
+// setup servo object
+Servo servo_claw; 
 
 // Pins Set-up:
 //Analog:
@@ -16,15 +20,15 @@ const int hall_pn = A1;
 const int ir1_pn = A4; // short range
 const int ir2_pn = A5; // long range
 //Digital:
-const int button_pn=2; 
-const int l0_pn=3; //left
-const int l1_pn=4; //right
-const int l2_pn=5; //far right (for juntion counting)
+const int button_pn=1; 
+const int l0_pn=2; //left
+const int l1_pn=3; //right
+const int l2_pn=4; //far right (for juntion counting)
 const int us1E_pn=6; // yellow wire
 const int us1T_pn=7; // green wire
 const int ledG_pn=8;
-const int ledA_pn=9;
-const int ledR_pn=10;
+const int ledR_pn=9;
+const int ledA_pn=10;
 const int servo1_pn=11;
 const int us2E_pn=12;
 const int us2T_pn=13;
@@ -114,14 +118,19 @@ void loop(){
   if (flag_onoff == true){
     ledA_flash(); // flash the amble LED at 2Hz frequency;
 
-    if (ldr <= 600) // ldr == 900 for not touching the blk
+    if (ldr > 50) // ldr == 20~30 for touching the blk
     {
 //      line_follow(); // continue to move forward (towards the block) until ldr changes to 500
       Serial.print("moving forwawrd....");
     }
     else {
       Serial.print("block found!!");
-      blk_fn(); //start detecting the 
+      delay(1000);
+      blk_fn(); //start detecting the magnet and collect the blk
+      Serial.print("magnet present: ");
+      Serial.println(flag_magnet);
+      Serial.print("box_intend: ");
+      Serial.println(box_intend);
     }
   }
 
@@ -130,6 +139,10 @@ void loop(){
 }
 
 
+
+void blk_collect(){
+  servo_claw.write(180); // the value here requires calibration
+}
 
 
 

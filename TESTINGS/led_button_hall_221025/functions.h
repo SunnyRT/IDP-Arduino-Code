@@ -32,29 +32,29 @@ extern const long interval;  // 2hz --> 0.5 second interval at which to blink (m
 
 
 // flags
+extern int side; 
 extern int count;
 extern bool flag_onoff;
 extern bool flag_started;
 extern bool flag_line;
+extern int flag_side;
 extern char flag_nav; 
-extern int flag_side; 
 
 extern bool flag_blk;
 extern bool flag_magnet;
 extern int box_intend;
 
-
 //=============================================================
 
 // global
 void sensor_read();
-float us_measure();
+void us_measure();
 float moving_avg();
 bool update_onoff();
 void line_follow();
 void ledA_flash();
 void stop_move();
-void move_forward();
+void move_forward(int speedR = motor_speed, int speedL = motor_speed);
 void move_backward();
 void adjust_left();
 void adjust_right();
@@ -70,7 +70,7 @@ void ramp_down();
 
 // side == 2;
 void blk_fn();
-
+void blk_collect();
 
 // side == 3;
 void tunnel();
