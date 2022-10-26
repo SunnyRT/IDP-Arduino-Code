@@ -21,7 +21,7 @@ bool flag_onoff = false;
 char flag_nav = 'P';
 int l0, l1, l2;
 
-int motor_speed = 250;
+int motor_speed = 200;
 int duration_steer = 1800;
 
 // button variable
@@ -113,13 +113,13 @@ void start_route()
 
 
 void line_follow() {
-if (l2 == HIGH && flag_nav != 'P')
+if (l2 == HIGH && flag_nav != 'F')
   {
-    Serial.println("Junctions detected!");
-    stop_move();
-    delay(1000);
+    //ignore junctions, just go forward;
+    move_forward();
   }
 
+  // if no junctions are detected
   else if (l2 == LOW)
   {
     // neither l0 or l1 detects the line
@@ -171,14 +171,14 @@ void adjust_left()
     Rwheel->run(FORWARD);
     Rwheel->setSpeed(motor_speed);
     Lwheel->run(BACKWARD);
-    Lwheel->setSpeed(200);
+    Lwheel->setSpeed(100);
 }
 
 void adjust_right()
 {
     flag_nav = 'R';
     Rwheel->run(BACKWARD);
-    Rwheel->setSpeed(200);
+    Rwheel->setSpeed(100);
     Lwheel->run(FORWARD);
     Lwheel->setSpeed(motor_speed);
 }
