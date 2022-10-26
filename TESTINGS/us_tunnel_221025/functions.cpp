@@ -155,7 +155,63 @@ void line_follow()
   }
 }
 
+/*******************************************************************************
+ * functions on motor
+ *******************************************************************************/
+void move_forward(int speedR, int speedL)
+{
+  flag_nav = 'F';
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(speedR);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(speedL);
+}
 
+void adjust_left()
+{
+  flag_nav = 'L';
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(BACKWARD);
+  Lwheel->setSpeed(motor_speed);
+}
+
+void adjust_right()
+{
+  flag_nav = 'R';
+  Rwheel->run(BACKWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(motor_speed);
+}
+void stop_move()
+{
+  flag_nav = 'P';
+  Rwheel->run(RELEASE);
+  Rwheel->setSpeed(0);
+  Lwheel->run(RELEASE);
+  Lwheel->setSpeed(0);
+}
+
+void turn_90left()
+{
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(RELEASE);
+  Lwheel->setSpeed(0);
+  delay(duration_steer);
+}
+
+void turn_90right()
+{
+  Rwheel->run(RELEASE);
+  Rwheel->setSpeed(0);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(motor_speed);
+  delay(duration_steer);
+}
+/*******************************************************************************
+ *******************************************************************************/
 
 // side == 0;
 void start_route()
