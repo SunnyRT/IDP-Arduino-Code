@@ -78,15 +78,14 @@ void loop()
 
     if (flag_onoff == false && flag_nav != 'P')
     {
-//        flag_line = false;
         stop_move();
     }
 
     else if (flag_onoff == true && flag_started == false)
     {
-//        flag_line = false;
+
         start_route();
-//        flag_line = true; //back onto the line after start_route completed i.e. started
+
     }
     else if (flag_onoff == true && flag_started == true)
     {
@@ -98,11 +97,11 @@ void loop()
 // define functions of start_route
 void start_route()
 {
-    if (l0 == HIGH && l1 == HIGH && l2 == HIGH && flag_nav != 'F')
+    if (l0 == LOW && l1 == LOW && l2 == LOW && flag_nav != 'F')
     {
         move_forward();
     }
-    else if ((l0 == LOW && l1 == LOW) || l2 == LOW)
+    else if ((l0 == HIGH && l1 == HIGH) || l2 == HIGH)
     {
         turn_90right();
         flag_started = true; // exit start_route
@@ -112,17 +111,17 @@ void start_route()
 
 
 void line_follow() {
-if (l2 == LOW && flag_nav != 'P')
+if (l2 == HIGH && flag_nav != 'P')
   {
     Serial.println("Junctions detected!");
     stop_move();
     delay(1000);
   }
 
-  else if (l2 == HIGH)
+  else if (l2 == LOW)
   {
     // neither l0 or l1 detects the line
-    if ((l0 == HIGH && l1 == HIGH) && flag_nav != 'F')
+    if ((l0 == LOW && l1 == LOW) && flag_nav != 'F')
     {
       // forward
       move_forward();
@@ -130,21 +129,21 @@ if (l2 == LOW && flag_nav != 'P')
     }
 
     // l0 detects the line
-    else if ((l0 == LOW && l1 == HIGH) && flag_nav != 'L')
+    else if ((l0 == HIGH && l1 == LOW) && flag_nav != 'L')
     {
       // adjust left slightly
       adjust_left();
     }
 
     // l1 detects the line
-    else if ((l0 == HIGH && l1 == LOW) && flag_nav != 'R')
+    else if ((l0 == LOW && l1 == HIGH) && flag_nav != 'R')
     {
       // adjust right slightly
       adjust_right();
     }
 
     // l0 and l1 both detect the line
-    else if ((l0 == LOW && l1 == LOW) && flag_nav != 'P')
+    else if ((l0 == HIGH && l1 == HIGH) && flag_nav != 'P')
     {
       // forward
       stop_move();
