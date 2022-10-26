@@ -32,8 +32,8 @@ const int l2_pn=4; //far right (for juntion counting)
 const int us1E_pn=6; // yellow wire
 const int us1T_pn=7; // green wire
 const int ledG_pn=8;
-const int ledA_pn=9;
-const int ledR_pn=10;
+const int ledR_pn=9;
+const int ledA_pn=10;
 const int servo1_pn=11;
 
 //us2: on the left

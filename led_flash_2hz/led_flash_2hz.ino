@@ -1,5 +1,5 @@
 // constants won't change. Used here to set a pin number:
-const int ledA_pn = 13;  // 13 for testing (built-in led) --> change to 9 in actual main progrm
+const int ledA_pn = 10;  // 13 for testing (built-in led) --> change to 9 in actual main progrm
 
 int ledAState = LOW;  // ledState used to set the LED
 
