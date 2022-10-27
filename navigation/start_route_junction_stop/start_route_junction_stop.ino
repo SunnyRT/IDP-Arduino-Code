@@ -133,7 +133,7 @@ if (l2 == HIGH && flag_nav != 'F')
   }
 
   // if no junctions are detected
-  else if (l2 == LOW)
+else if (l2 == LOW)
   {
     // neither l0 or l1 detects the line
     if ((l0 == LOW && l1 == LOW) && flag_nav != 'F')
@@ -144,14 +144,14 @@ if (l2 == HIGH && flag_nav != 'F')
     }
 
     // l0 detects the line
-    else if ((l0 == HIGH && l1 == LOW) && flag_nav != 'L')
+  else if ((l0 == HIGH && l1 == LOW) && flag_nav != 'L')
     {
       // adjust left slightly
       adjust_left();
     }
 
     // l1 detects the line
-    else if ((l0 == LOW && l1 == HIGH) && flag_nav != 'R')
+  else if ((l0 == LOW && l1 == HIGH) && flag_nav != 'R')
     {
       // adjust right slightly
       adjust_right();
