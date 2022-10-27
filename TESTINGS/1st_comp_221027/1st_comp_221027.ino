@@ -116,7 +116,7 @@ void loop()
   }
   else if (flag_onoff == true && flag_started == true)
   {
-    if (ldr < 50) // ldr == 20~30 for touching the blk
+    if (ldr < 60) // ldr == 20~30 for touching the blk
     {
       Serial.print("block found!!");
       delay(1000);
@@ -187,7 +187,7 @@ void line_follow()
     else if ((l0 == HIGH && l1 == HIGH) && flag_nav != 'P')
     {
       // forward
-      stop_move();
+      stop_move(); // report ERror!
     }
   }
 }
@@ -265,9 +265,9 @@ void ledA_flash()
 
 void blk_fn()
 {
-  // ensunre the car is not stationary.
+  // ensure the car is stationary.
   stop_move();
-  // magnetc identification
+  // magnetic identification
   if (hall != 0) // hall == 1 if magnet is present
   {
     // magnet is detected in the blk

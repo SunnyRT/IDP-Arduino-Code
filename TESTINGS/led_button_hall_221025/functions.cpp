@@ -58,7 +58,7 @@ float moving_avg(float new_reading)
   // remove oldest value
   sum -= values_array[current_index];
   // replace oldest with new reading
-  sum[current_index] = new_reading;
+  values_array[current_index] = new_reading;
   sum =+ new_reading;
 
   // move to next position (which is now the oldest value) in array
@@ -69,7 +69,7 @@ float moving_avg(float new_reading)
     current_index = 0; // wrap round to start of window szie
   }
   // return average
-  return sum/window_size
+  return sum/window_size;
 }
 
 // collects sensor readings (will be run every loop)

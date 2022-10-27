@@ -8,10 +8,10 @@ const int button_pn=2;
 const int l0_pn=3; //left
 const int l1_pn=4; //right
 const int l2_pn=5; //far right (for juntion counting)
-const int us1E_pn=6; // yellow wire
-const int us1T_pn=7; // green wire
-const int us2E_pn=12; // yellow
-const int us2T_pn=13; // green
+// const int us1E_pn=6; // yellow wire
+// const int us1T_pn=7; // green wire
+const int us2E_pn=6; // yellow
+const int us2T_pn=7; // green
 const int ledG_pn=8;
 const int ledA_pn=9;
 const int ledR_pn=10;
@@ -26,20 +26,20 @@ float ir1_avg, ir2_avg;
 
 void us_measure()
 {
-  digitalWrite(us1T_pn, LOW);
+  // digitalWrite(us1T_pn, LOW);
   digitalWrite(us2T_pn, LOW);
-  delayMicroseconds(1);
+  delayMicroseconds(2);
   // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(us1T_pn, HIGH);
+  // digitalWrite(us1T_pn, HIGH);
   digitalWrite(us2T_pn, HIGH);
   delayMicroseconds(10);
-  digitalWrite(us1T_pn, LOW);
+  // digitalWrite(us1T_pn, LOW);
   digitalWrite(us2T_pn, LOW);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  float us1_duration = pulseIn(us1E_pn, HIGH);
+  // float us1_duration = pulseIn(us1E_pn, HIGH);
   float us2_duration = pulseIn(us2E_pn, HIGH);
   // get distance values(*v_sound /2)
-  us1_distance= us1_duration * 0.017;
+  // us1_distance= us1_duration * 0.017;
   us2_distance= us2_duration * 0.017; 
 }
 
@@ -68,8 +68,11 @@ void us_measure()
 void setup(){
   Serial.begin(9600);
   // pinMode(ir1_pn, INPUT); 
-  pinMode(us1E_pn, INPUT);
-  pinMode(us1T_pn, OUTPUT);
+  // pinMode(us1E_pn, INPUT);
+  // pinMode(us1T_pn, OUTPUT);
+
+  pinMode(us2E_pn, INPUT);
+  pinMode(us2T_pn, OUTPUT);
 
 }
 

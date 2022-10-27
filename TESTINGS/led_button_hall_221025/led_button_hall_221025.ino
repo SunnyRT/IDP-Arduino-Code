@@ -20,7 +20,7 @@ const int hall_pn = A1;
 const int ir1_pn = A4; // short range
 const int ir2_pn = A5; // long range
 //Digital:
-const int button_pn=1; 
+const int button_pn=5; 
 const int l0_pn=2; //left
 const int l1_pn=3; //right
 const int l2_pn=4; //far right (for juntion counting)
@@ -114,11 +114,12 @@ void loop(){
   Serial.println(ldr);
   Serial.print("hall effect: ");
   Serial.println(hall);
+  Serial.println(digitalRead(button_pn));
 
   if (flag_onoff == true){
     ledA_flash(); // flash the amble LED at 2Hz frequency;
 
-    if (ldr > 50) // ldr == 20~30 for touching the blk
+    if (ldr > 30) // ldr == 20~30 for touching the blk
     {
 //      line_follow(); // continue to move forward (towards the block) until ldr changes to 500
       Serial.print("moving forwawrd....");
