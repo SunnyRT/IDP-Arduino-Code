@@ -15,8 +15,9 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 #define l1_pn 3      // right
 #define l2_pn 4      // far right
 const int ledG_pn=8;
-const int ledA_pn=10;
 const int ledR_pn=9;
+const int ledA_pn=10; // check the connections
+
 
 // Variables will change:
 bool flag_started = false;
@@ -52,8 +53,7 @@ void loop()
 {
     // read and store light sensor values
 
-//    ledA_flash(); //too dim!!!!
-    
+    ledA_flash(); //too dim!!!!
     
     l0 = digitalRead(l0_pn);
     l1 = digitalRead(l1_pn);
