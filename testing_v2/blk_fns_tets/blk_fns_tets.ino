@@ -12,6 +12,7 @@ int duration_steer = 2000; // require testing to determine value
 Servo servo_claw;
 
 
+
 // Pins Set-up:
 //Analog:
 #define ledG_pn A2
@@ -81,25 +82,48 @@ void loop() {
   Serial.print("us1: ");
   Serial.println(us1_distance);
 
-  if (us1_distance >= 5){
-    Serial.println("moving forwards...");
-    move_forward();
-    //line_follow();    
-  }
-  else  {
+  if (us1_distance < 2) {
+    // approach slowly until us1_distance = 2cm
     stop_move();
-    
+    Serial.println("Block Detected");
+    delay(1000);
+    Serial.println("Start detecting if magnet");
+    /* blk function */
+    if (hall == 0) {
+      // magnet
+      Serial.println("Magnet");
+      flag_magnet = 1;
+      box_intend = 3; // blk is to be delivered in the red box
+      // RED LED for 5sec
+      analogWrite(ledR_pn, 255);
+      delay(5000);
+      analogWrite(ledR_pn, 0);
+    }
+    else {
+      // no magnet
+      Serial.println("Not Magnet");
+      flag_magnet = 0;
+      box_intend = 1; // bl
+      // Green LED for 5sec
+      analogWrite(ledG_pn, 255);
+      delay(5000);
+      analogWrite(ledG_pn, 0);
+    }
+
+    /** claw  code */
+    servo_claw.write(180); // the value here requires alibration
+    delay(1000);
+    flag_blk = true;
+    stop_move();
+    flag_onoff = false;
   }
-  
-  
+  else //continue approach the blk when the distance is far. (>2cm)
+  {
+    Serial.println("moving forwards");
+    move_forward();
+  }
 
 }
-
-
-
-
-
-
 
 
 
@@ -116,4 +140,23 @@ void us1_measure()
   long us1_duration = pulseIn(us1E_pn, HIGH);
   // get distance values(*v_sound /2)
   us1_distance = us1_duration * 0.017;
+}
+
+
+void move_forward()
+{
+    flag_nav = 'F';
+    Rwheel->run(FORWARD);
+    Rwheel->setSpeed(motor_speed);
+    Lwheel->run(FORWARD);
+    Lwheel->setSpeed(motor_speed);
+}
+
+
+void stop_move(){
+    flag_nav = 'P';
+    Rwheel->run(RELEASE);
+    Rwheel->setSpeed(0);
+    Lwheel->run(RELEASE);
+    Lwheel->setSpeed(0);
 }
