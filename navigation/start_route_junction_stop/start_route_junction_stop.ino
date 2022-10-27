@@ -14,6 +14,9 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 #define l0_pn 2      // left
 #define l1_pn 3      // right
 #define l2_pn 4      // far right
+const int ledG_pn=8;
+const int ledA_pn=10;
+const int ledR_pn=9;
 
 // Variables will change:
 bool flag_started = false;
@@ -21,13 +24,19 @@ bool flag_onoff = false;
 char flag_nav = 'P';
 int l0, l1, l2;
 
-int motor_speed = 250;
-int duration_steer = 1800;
+int motor_speed = 200;
+int duration_steer = 2000;
 
 // button variable
 byte lastButtonState = LOW;
 unsigned long debounceDuration = 50; // millis
 unsigned long lastTimeButtonStateChanged = 0;
+
+
+//ledA_flash variables
+int ledAState = LOW;  // ledState used to set the LED
+unsigned long previousMillis = 0;  // will store last time LED was updated
+const long interval = 250;  // 2hz --> 0.5 second interval at which to blink (milliseconds)
 
 void setup()
 {
@@ -43,6 +52,8 @@ void loop()
 {
     // read and store light sensor values
 
+//    ledA_flash(); //too dim!!!!
+    
     
     l0 = digitalRead(l0_pn);
     l1 = digitalRead(l1_pn);
@@ -85,7 +96,6 @@ void loop()
 
     else if (flag_onoff == true && flag_started == false)
     {
-
         start_route();
 
     }
@@ -105,7 +115,9 @@ void start_route()
     }
     else if ((l0 == HIGH && l1 == HIGH) || l2 == HIGH)
     {
-        turn_90right();
+        move_forward();
+        delay(800);
+        turn_90left();
         flag_started = true; // exit start_route
     }
 }
@@ -113,13 +125,13 @@ void start_route()
 
 
 void line_follow() {
-if (l2 == HIGH && flag_nav != 'P')
+if (l2 == HIGH && flag_nav != 'F')
   {
-    Serial.println("Junctions detected!");
-    stop_move();
-    delay(1000);
+    //ignore junctions, just go forward;
+    move_forward();
   }
 
+  // if no junctions are detected
   else if (l2 == LOW)
   {
     // neither l0 or l1 detects the line
@@ -171,14 +183,14 @@ void adjust_left()
     Rwheel->run(FORWARD);
     Rwheel->setSpeed(motor_speed);
     Lwheel->run(BACKWARD);
-    Lwheel->setSpeed(200);
+    Lwheel->setSpeed(100);
 }
 
 void adjust_right()
 {
     flag_nav = 'R';
     Rwheel->run(BACKWARD);
-    Rwheel->setSpeed(200);
+    Rwheel->setSpeed(100);
     Lwheel->run(FORWARD);
     Lwheel->setSpeed(motor_speed);
 }
@@ -192,11 +204,38 @@ void stop_move()
     Lwheel->setSpeed(0);
 }
 
-void turn_90right()
+void turn_90left()
 {
     Rwheel->run(FORWARD);
-    Rwheel->setSpeed(100);
+    Rwheel->setSpeed(motor_speed);
     Lwheel->run(FORWARD);
-    Lwheel->setSpeed(motor_speed);
+    Lwheel->setSpeed(50);
     delay(duration_steer);
+}
+
+
+
+// amber LED flashes at 2Hz while robot is running
+void ledA_flash()
+{
+  // check to see if it's time to blink the LED; that is, if the difference
+  // between the current time and last time you blinked the LED is bigger than
+  // the interval at which you want to blink the LED.
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis >= interval)
+  {
+    // save the last time you blinked the LED
+    previousMillis = currentMillis;
+    // toggle LED
+    if (ledAState == LOW)
+    {
+      ledAState = HIGH;
+    }
+    else
+    {
+      ledAState = LOW;
+    }
+    // set the LED with the ledState of the variable:
+    digitalWrite(ledA_pn, ledAState);
+  }
 }
