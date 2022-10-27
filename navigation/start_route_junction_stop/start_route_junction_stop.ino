@@ -44,6 +44,7 @@ void setup()
     pinMode(l0_pn, INPUT); // light sensor on the left
     pinMode(l1_pn, INPUT); // light sensor on the right
     pinMode(l2_pn, INPUT); // light sensor on the far right
+    pinMode(ledA_pn, OUTPUT);
     Serial.begin(9600);
     AFMS.begin(); // Connect to the controller
 }
@@ -52,7 +53,7 @@ void loop()
 {
     // read and store light sensor values
 
-//    ledA_flash(); //too dim!!!!
+    ledA_flash(); //too dim!!!!
     
     
     l0 = digitalRead(l0_pn);
