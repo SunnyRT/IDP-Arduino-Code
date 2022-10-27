@@ -268,7 +268,7 @@ void blk_fn()
   // ensure the car is stationary.
   stop_move();
   // magnetic identification
-  if (hall != 0) // hall == 1 if magnet is present
+  if (hall > 0) // hall == 1 if magnet is present
   {
     // magnet is detected in the blk
     flag_magnet = 1;
