@@ -23,11 +23,11 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 /*************************************************************************
    PID control system variables
  *************************************************************************/
-float Kp = 0.07; // related to the proportional control term;
+float Kp = 1; // related to the proportional control term;
 // change the value by trial-and-error (ex: 0.07).
-float Ki = 0.0008; // related to the integral control term;
+float Ki = 0.1; // related to the integral control term;
 // change the value by trial-and-error (ex: 0.0008).
-float Kd = 0.6; // related to the derivative control term;
+float Kd = 0.1; // related to the derivative control term;
 // change the value by trial-and-error (ex: 0.6).
 int P;
 int I;
@@ -37,7 +37,7 @@ int D;
    Global variables
  *************************************************************************/
 int lastError = 0;
-float us2_distance;
+int us2_distance;
 
 
 void setup() {
@@ -66,6 +66,21 @@ void loop()
 /*************************************************************************
    functions
  *************************************************************************/
+void us2_measure()
+{
+  digitalWrite(us2T_pn, LOW);
+  delayMicroseconds(1);
+  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
+  digitalWrite(us2T_pn, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(us2T_pn, LOW);
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  float us2_duration = pulseIn(us2E_pn, HIGH);
+  // get distance values(*v_sound /2)
+  us2_distance = us2_duration * 0.017;
+}
+
+
 void tunnel_PID_control()
 {
 
@@ -107,28 +122,13 @@ void tunnel_PID_control()
   }
 
   flag_nav = 'F';
-  Rwheel->run(FORWARD);
-  Rwheel->setSpeed(motorspeedR);
+//  Rwheel->run(FORWARD);
+//  Rwheel->setSpeed(motorspeedR);
   Serial.print("speedR: ");
   Serial.println(motorspeedR);
 
-  Lwheel->run(FORWARD);
-  Lwheel->setSpeed(motorspeedL);
+//  Lwheel->run(FORWARD);
+//  Lwheel->setSpeed(motorspeedL);
   Serial.print("speedL: ");
   Serial.println(motorspeedL);
-}
-
-
-void us2_measure()
-{
-  digitalWrite(us2T_pn, LOW);
-  delayMicroseconds(1);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(us2T_pn, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(us2T_pn, LOW);
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  long us2_duration = pulseIn(us2E_pn, HIGH);
-  // get distance values(*v_sound /2)
-  us2_distance = us2_duration * 0.017;
 }
