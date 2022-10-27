@@ -15,10 +15,10 @@ Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 #define l1_pn 3     // right
 #define l2_pn 4     // far right
 #define ledG_pn 8
-#define ledA_pn 10
 #define ledR_pn 9
-#define ldr_pn A0
-#define hall_pn A1
+#define ledA_pn 10
+//#define ldr_pn A0
+#define hall_pn 11
 
 // Variables will change:
 bool flag_started = false;
@@ -48,7 +48,7 @@ void setup()
   pinMode(l0_pn, INPUT); // light sensor on the left
   pinMode(l1_pn, INPUT); // light sensor on the right
   pinMode(l2_pn, INPUT); // light sensor on the far right
-  pinMode(ldr_pn, INPUT);
+//  pinMode(ldr_pn, INPUT);
   pinMode(hall_pn, INPUT);
   pinMode(ledG_pn, OUTPUT);
   pinMode(ledA_pn, OUTPUT);
@@ -61,12 +61,12 @@ void loop()
 {
   // read and store light sensor values
 
-  //    ledA_flash(); //too dim!!!!
+      ledA_flash(); //too dim!!!!
 
   l0 = digitalRead(l0_pn);
   l1 = digitalRead(l1_pn);
   l2 = digitalRead(l2_pn);
-  ldr = analogRead(ldr_pn);
+//  ldr = analogRead(ldr_pn);
   hall = digitalRead(hall_pn);
 
   // print values of the light sensors to the serial monitor
