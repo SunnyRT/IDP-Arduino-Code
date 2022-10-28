@@ -13,12 +13,12 @@ Servo servo_claw;
 
 // Pins Set-up:
 //Analog:
-const int ldr_pn = A0;
-const int hall_pn = A1;
-const int ir1_pn = A4; // short range
-const int ir2_pn = A5; // long range
+const int ledG_pn=A2; // now analog
+const int ledR_pn=A3; // now analog
+
+
 //Digital:
-const int button_pn=1; 
+const int button_pn=5; 
 const int l0_pn=2; //left
 const int l1_pn=3; //right
 const int l2_pn=4; //far right (for juntion counting)
@@ -26,10 +26,10 @@ const int l2_pn=4; //far right (for juntion counting)
 //us1: on the front
 const int us1E_pn=6; // yellow wire
 const int us1T_pn=7; // green wire
-const int ledG_pn=A2; // now analog
-const int ledR_pn=A3; // now analog
+const int hall_pn = 8;
+const int servo1_pn=9; // in-built port for servos (side)
 const int ledA_pn=10;
-const int servo1_pn=11;
+
 
 //us2: on the left
 const int us2E_pn=12;
@@ -50,20 +50,22 @@ unsigned long previousMillis = 0;  // will store last time LED was updated
 const long interval = 250;  // 2hz --> 0.5 second interval at which to blink (milliseconds)
 
 // PID tunnel navigation variables
-int lastError = 0;
+float lastError = 0;
 float Kp = 0.07; // related to the proportional control term;
 // change the value by trial-and-error (ex: 0.07).
 float Ki = 0.0008; // related to the integral control term;
 // change the value by trial-and-error (ex: 0.0008).
 float Kd = 0.6; // related to the derivative control term;
 // change the value by trial-and-error (ex: 0.6).
-int P;
-int I;
-int D;
-const int maxspeedR = 150;
-const int maxspeedL = 150;
-const int basespeedR = 100;
-const int basespeedL = 100;
+float P;
+float I;
+float D;
+float distance_tunnel = 7;
+
+const float maxspeedR = 150;
+const float maxspeedL = 150;
+const float basespeedR = 100;
+const float basespeedL = 100;
 
 
 /*************
