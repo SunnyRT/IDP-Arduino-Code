@@ -4,8 +4,8 @@ const int us1T_pn = 7; // yellow wire
 const int us2E_pn = 12;
 const int us2T_pn = 13;
 
-int us1_distance;
-int us2_distance;
+float us1_distance;
+float us2_distance;
 
 void setup() {
   // put your setup code here, to run once:
@@ -40,7 +40,7 @@ void us1_measure()
   delayMicroseconds(10);
   digitalWrite(us1T_pn, LOW);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  long us1_duration = pulseIn(us1E_pn, HIGH);
+  float us1_duration = pulseIn(us1E_pn, HIGH);
   // get distance values(*v_sound /2)
   us1_distance = us1_duration * 0.017;
 }
@@ -55,7 +55,7 @@ void us2_measure()
   delayMicroseconds(10);
   digitalWrite(us2T_pn, LOW);
   // Reads the echoPin, returns the sound wave travel time in microseconds
-  long us2_duration = pulseIn(us2E_pn, HIGH);
+  float us2_duration = pulseIn(us2E_pn, HIGH);
   // get distance values(*v_sound /2)
   us2_distance = us2_duration * 0.017;
 }
