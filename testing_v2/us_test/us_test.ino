@@ -1,6 +1,6 @@
 
-const int us1E_pn = 6; // yellow wire
-const int us1T_pn = 7; // green wire
+const int us1E_pn = 6; // purple wire
+const int us1T_pn = 7; // yellow wire
 const int us2E_pn = 12;
 const int us2T_pn = 13;
 
