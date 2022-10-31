@@ -18,7 +18,7 @@ void loop(){
    // Make servo go to 0 degrees 
 
    // Make servo go to 90 degrees 
-   servo_claw.write(50); 
+   servo_claw.write(45); 
    delay(1000); 
    // Make servo go to 180 degrees 
    servo_claw.write(0); 
