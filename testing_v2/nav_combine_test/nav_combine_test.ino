@@ -7,8 +7,9 @@
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
 Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIHGT
 Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
-int motor_speed = 250;
-int duration_steer = 2000; // require testing to determine value
+int motor_speed = 200;
+int duration_steer = 1400; // require testing to determine value
+int duration_start_forward = 1400;
 Servo servo_claw;
 
 // Pins Set-up:
@@ -35,7 +36,8 @@ const int us2T_pn = 13;
 // Sensor Values
 int l0, l1, l2, hall;
 int loop_count = 0;
-float us1_distance, us2_distance;
+float us1_distance = 200.0;
+float us2_distance;
 
 // button debounce variables
 byte lastButtonState = LOW;
@@ -79,6 +81,7 @@ char flag_nav;
 //"B": backwards
 //"F": forwards
 bool flag_blk = false; // block collected
+bool flag_delivered = false;
 bool flag_magnet;
 bool flag_tunnel; // true if in tunnel, false if not
 int box_intend;
@@ -184,34 +187,42 @@ void loop() {
         //      Serial.print("us2: ");
         //      Serial.println(us2_distance);
       }
-      if (us1_distance > 6.0) {
+      if (us1_distance > 10.0) {
         line_follow();
         Serial.println("line");
       }
       else {
-        stop_move();
-        delay(1000);
-        // rotate claw to trap the blk
-        servo_claw.write(45);
-        delay(1000);
-        turn_180();
-
-        flag_blk = true;
+        blk_collect();
       }
     }
-    else // blk has been collected, return back
+    else // blk has been collected, return route
     {
-      line_follow();
-      //      if (us2_distance > 12.0) //outside the tunnel
-      //      {
-      //        line_follow();
-      //        Serial.println("line");
-      //      }
-      //      else //within the tunnel
-      //      {
-      //        tunnel_PID_control(distance_tunnel);
-      //        Serial.println("tunnel");
-      //      }
+      if (flag_delivered == false) //blk has yet to be delivered
+      {
+        if (l2 == LOW) //move back towards the green box
+        {
+          line_follow();
+        }
+        else if (l2 == HIGH && l1 == HIGH)// junction detected! --> blk delivery
+        {
+
+          Serial.println("junction detected!");
+          blk_delivery();
+          blk_retriet();
+        }
+      }
+      else //blk has been delivered, return home
+      {
+        if (l2 == LOW) //move back towards the middle
+        {
+          line_follow();
+        }
+        else if (l2 == HIGH && l1 == HIGH)// junction detected! --> return home
+        {
+          Serial.println("junction detected!");
+          return_home();
+        }
+      }
     }
   }
 }
@@ -268,7 +279,9 @@ void start_route() {
   else if ((l0 == HIGH && l1 == HIGH) || l2 == HIGH)
   {
     move_forward();
-    delay(400);
+    delay(duration_start_forward);
+    stop_move();
+    delay(1000);
     turn_90left();
     flag_started = true; // exit start_route
   }
@@ -293,6 +306,15 @@ void move_forward()
   Lwheel->setSpeed(motor_speed);
 }
 
+void move_backward() {
+  flag_nav = 'B';
+  Rwheel->run(BACKWARD);
+  Rwheel->setSpeed(motor_speed);
+  Lwheel->run(BACKWARD);
+  Lwheel->setSpeed(motor_speed);
+
+}
+
 void adjust_left()
 {
   flag_nav = 'L';
@@ -315,9 +337,18 @@ void turn_90left()
 {
   Rwheel->run(FORWARD);
   Rwheel->setSpeed(motor_speed);
+  Lwheel->run(BACKWARD);
+  Lwheel->setSpeed(motor_speed);
+  delay(duration_steer-100);
+}
+
+void turn_90right()
+{
+  Rwheel->run(BACKWARD);
+  Rwheel->setSpeed(motor_speed);
   Lwheel->run(FORWARD);
-  Lwheel->setSpeed(50);
-  delay(duration_steer);
+  Lwheel->setSpeed(motor_speed);
+  delay(duration_steer+100);
 }
 
 void turn_180() {
@@ -325,11 +356,65 @@ void turn_180() {
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(BACKWARD);
   Lwheel->setSpeed(motor_speed);
-  delay(2000); // How long it will turn for!
+  delay(duration_steer * 2); // How long it will turn for!
 
 }
 
+void blk_collect()
+{
+  stop_move();
+  delay(1000);
+  // rotate claw to trap the blk
+  servo_claw.write(45);
+  delay(1000);
+  turn_180();
 
+  flag_blk = true;
+}
+
+
+void blk_delivery()
+{
+  stop_move();
+  delay(1000);
+  turn_90right();
+  stop_move();
+  delay(1000);
+  move_forward();
+  delay(duration_start_forward);
+  stop_move();
+  delay(1000);
+  servo_claw.write(0);
+  delay(1000);
+  flag_delivered = true;
+}
+
+void blk_retriet()
+{
+  move_backward();
+  delay(duration_start_forward);
+  stop_move();
+  delay(1000);
+  turn_90left();
+  stop_move();
+  delay(1000);
+  move_forward();
+  delay(200);
+}
+
+void return_home()
+{
+  stop_move();
+  delay(1000);
+  turn_90right();
+  stop_move();
+  delay(1000);
+  move_forward();
+  delay(2.5 * duration_start_forward);
+  stop_move();
+  delay(1000);
+  flag_onoff = false; //power off
+}
 
 void us1_measure()
 {
