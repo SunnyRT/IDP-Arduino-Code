@@ -1,4 +1,4 @@
-#define hall_pn 11
+#define hall_pn 8
 
 void setup() {
   // put your setup code here, to run once:
