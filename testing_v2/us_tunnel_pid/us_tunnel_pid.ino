@@ -83,9 +83,9 @@ void loop()
   //  Serial.println(us1_distance);
   if (loop_count == 0)
   {
-  us2_measure();
+    us2_measure();
   }
-  
+
   Serial.print("us2: ");
   Serial.println(us2_distance);
 
@@ -176,13 +176,13 @@ void tunnel_PID_control(float distance_ref)
   }
 
   flag_nav = 'F';
-      Rwheel->run(FORWARD);
-      Rwheel->setSpeed(motorspeedR);
-//  Serial.print("speedR: ");
-//  Serial.println(motorspeedR);
+  Rwheel->run(FORWARD);
+  Rwheel->setSpeed(motorspeedR);
+  //  Serial.print("speedR: ");
+  //  Serial.println(motorspeedR);
 
-      Lwheel->run(FORWARD);
-      Lwheel->setSpeed(motorspeedL);
-//  Serial.print("speedL: ");
-//  Serial.println(motorspeedL);
+  Lwheel->run(FORWARD);
+  Lwheel->setSpeed(motorspeedL);
+  //  Serial.print("speedL: ");
+  //  Serial.println(motorspeedL);
 }

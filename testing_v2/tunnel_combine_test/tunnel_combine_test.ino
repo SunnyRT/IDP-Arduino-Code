@@ -48,7 +48,7 @@ unsigned long lastTimeButtonStateChanged = 0;
 // time variable
 unsigned long started_time = 0;
 unsigned long return_home_time = 0;
-int return_home_duration = 5100;
+int return_home_duration = 5200;
 
 // PID tunnel navigation variables
 float Kp = 10; // related to the proportional control term;
@@ -443,7 +443,7 @@ void turn_180() {
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(BACKWARD);
   Lwheel->setSpeed(motor_speed);
-  delay(duration_steer * 2); // How long it will turn for!
+  delay(duration_steer * 2 - 200); // How long it will turn for!
 
 }
 
