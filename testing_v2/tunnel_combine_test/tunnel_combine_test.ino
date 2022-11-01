@@ -37,7 +37,7 @@ const int us2T_pn = 13;
 int l0, l1, l2, hall;
 int loop_count = 0;
 float us1_distance = 200.0;
-float us2_distance;
+float us2_distance = 200.0;
 
 // button debounce variables
 byte lastButtonState = LOW;
@@ -49,22 +49,14 @@ unsigned long return_home_time = 0;
 int return_home_duration = 5100;
 
 // PID tunnel navigation variables
-//float lastError = 0;
 float Kp = 10; // related to the proportional control term;
-// change the value by trial-and-error (ex: 0.07).
-//float Ki = 0.0008; // related to the integral control term;
-//// change the value by trial-and-error (ex: 0.0008).
-//float Kd = 0.6; // related to the derivative control term;
-//// change the value by trial-and-error (ex: 0.6).
 float P;
-//float I;
-//float D;
 float distance_tunnel = 7;
 
-const float maxspeedR = 250.0;
-const float maxspeedL = 250.0;
-const float basespeedR = 200.0;
-const float basespeedL = 200.0;
+const float maxspeedR = 200.0;
+const float maxspeedL = 200.0;
+const float basespeedR = 150.0;
+const float basespeedL = 150.0;
 
 
 /*************

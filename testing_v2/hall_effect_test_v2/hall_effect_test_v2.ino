@@ -22,7 +22,7 @@ void loop() {
       delay(100);
       hall = digitalRead(hall_pn);
       Serial.println(hall);
-      if (hall == HIGH) 
+      if (hall == LOW) 
       {
         box_intend = 3;
       }
