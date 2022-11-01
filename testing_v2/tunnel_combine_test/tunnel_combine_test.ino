@@ -40,18 +40,21 @@ float us1_distance = 200.0;
 float us2_distance = 200.0;
 
 // button debounce variables
+unsigned long currentTime = 0;
 byte lastButtonState = LOW;
 unsigned long debounceDuration = 50; // millis
 unsigned long lastTimeButtonStateChanged = 0;
 
-// time variable for return_home
+// time variable
+unsigned long started_time = 0;
 unsigned long return_home_time = 0;
 int return_home_duration = 5100;
 
 // PID tunnel navigation variables
 float Kp = 10; // related to the proportional control term;
 float P;
-float distance_tunnel = 7;
+float distance_tunnel1 = 5;
+float distance_tunnel2 = 7; //unit in cm
 
 const float maxspeedR = 200.0;
 const float maxspeedL = 200.0;
@@ -111,8 +114,8 @@ void loop() {
   else {
     loop_count += 1;
   }
-//  Serial.print("loop count: ");
-//  Serial.println (loop_count);
+  //  Serial.print("loop count: ");
+  //  Serial.println (loop_count);
 
   /*read & print line sensors*/
   Serial.print("Line Sensors: ");
@@ -126,20 +129,23 @@ void loop() {
 
 
   // flags
-//  Serial.print("Flag_nav: ");
-//  Serial.println(flag_nav);
-//  Serial.print("Flag Started: ");
-//  Serial.println(flag_started);
+  //  Serial.print("Flag_nav: ");
+  //  Serial.println(flag_nav);
+  //  Serial.print("Flag Started: ");
+  //  Serial.println(flag_started);
 
   /** On-off Push Button:*/
   // if the time elapsed is greater than time for debounce:
-  if (millis() - lastTimeButtonStateChanged > debounceDuration) {
+  currentTime = millis();
+  Serial.print("currentTime: ");
+  Serial.println(currentTime);
+  if (currentTime - lastTimeButtonStateChanged > debounceDuration) {
     // read button state
     byte buttonState = digitalRead(button_pn);
     // if button state has changed
     if (buttonState != lastButtonState) {
       // update time
-      lastTimeButtonStateChanged = millis();
+      lastTimeButtonStateChanged = currentTime;
       // update lastButton state
       lastButtonState = buttonState;
       // while being pressed
@@ -172,18 +178,26 @@ void loop() {
   // 'ON' and not running the start function:
   else if (flag_onoff == true && flag_started == false) {
     start_route();
+    started_time = millis();
+    Serial.print("started_time: ");
+    Serial.println(started_time);
   }
   // if On and the start fn has been completed:
   else if (flag_onoff == true && flag_started == true) {
     if (flag_blk == false) // no blk is collected
     {
+      while ((currentTime - started_time) > 13500 && (currentTime - started_time) < 18000) {
+        us2_measure();
+        Serial.print("us2: ");
+        Serial.println(us2_distance);
+        tunnel_PID_control(distance_tunnel2);
+        Serial.println("moving in tunnel...");
+        currentTime = millis();
+      }
       if (loop_count == 0) {
         us1_measure();
         Serial.print("us1: ");
         Serial.println(us1_distance);
-        //      us2_measure();
-        //      Serial.print("us2: ");
-        //      Serial.println(us2_distance);
       }
       if (us1_distance > 10.0) {
         line_follow();
@@ -191,6 +205,7 @@ void loop() {
       }
       else // the blk has been found!!!!
       {
+        digitalWrite(ledA_pn, LOW);
         stop_move();
         delay(1000);
 
@@ -206,7 +221,9 @@ void loop() {
         delay(300);
         stop_move();
         delay(1000);
+        blk_LEDindication();
         blk_collect();
+        digitalWrite(ledA_pn, HIGH);
       }
     }
     else // blk has been collected, return route
@@ -220,7 +237,22 @@ void loop() {
         if (l2 == LOW) //move back towards the green box
         {
           flag_box_register = false;
-          line_follow();
+          if (loop_count == 0)
+          {
+            us2_measure();
+          }
+          Serial.print("us2: ");
+          Serial.println(us2_distance);
+
+          if (us2_distance > 12.0)
+          {
+            line_follow();
+          }
+          else
+          {
+            tunnel_PID_control(distance_tunnel2);
+            Serial.println("moving in tunnel...");
+          }
         }
         else if (l2 == HIGH && l1 == HIGH )// junction detected! --> blk delivery
         {
@@ -235,7 +267,10 @@ void loop() {
             Serial.println("junction detected!");
             blk_delivery();
             blk_retriet();
-            return_home_time = millis() ;
+            return_home_time = millis();
+            Serial.print("return_home_time: ");
+            Serial.println(return_home_time);
+
           }
           else if (box_pass < box_intend) //not yet reached the intended box to deliver the blk.
           {
@@ -247,10 +282,10 @@ void loop() {
         }
       }
 
-      
+
       else // (flag_delivered == true) blk has been delivered, return home
       {
-        if ((millis() - return_home_time) < return_home_duration) //move back towards the middle
+        if ((currentTime - return_home_time) < return_home_duration) //move back towards the middle
         {
           line_follow();
         }
@@ -283,7 +318,7 @@ void line_follow() {
     // 000 & it's not already moving forward
     if ((l0 == LOW && l1 == LOW) && flag_nav != 'F') {
       move_forward();
-//      Serial.println("Move Forward");
+      //      Serial.println("Move Forward");
     }
 
     // 100 & not already moving left
@@ -300,7 +335,7 @@ void line_follow() {
   // xx1 or 11x(junction detected)
   else if (l2 == HIGH || (l0 == HIGH && l1 == HIGH)) {
     // handle junction depending on flags
-//    Serial.println("Junction Detected");
+    //    Serial.println("Junction Detected");
   }
 
   // catch all other cases: stop & report error
@@ -355,7 +390,7 @@ void move_forward()
   Rwheel->run(FORWARD);
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(FORWARD);
-  Lwheel->setSpeed(motor_speed + 5);
+  Lwheel->setSpeed(motor_speed + 6);
 }
 
 void move_backward() {
@@ -434,7 +469,11 @@ void blk_magnet()
   Serial.println("finish detecting!");
   Serial.print("box_intend: ");
   Serial.println(box_intend);
+}
 
+
+void blk_LEDindication()
+{
   if (box_intend == 3) //magnet present
   {
     analogWrite(ledR_pn, 255);
@@ -448,7 +487,6 @@ void blk_magnet()
     analogWrite(ledG_pn, 0);
   }
 }
-
 
 void blk_collect()
 {
@@ -551,16 +589,12 @@ void us2_measure()
 }
 
 
-void tunnel_PID_control(float distance_ref)
+void tunnel_PID_control(float distance_wall)
 {
-  float error = distance_ref - us2_distance; // 5.0 is the ideal distance from the tunnel wall
+  float error = distance_wall - us2_distance;
 
   P = error;
-  //  I = I + error;
-  //  D = error - lastError;
-  //  lastError = error;
   float motorspeed = P * Kp;
-  //  float motorspeed = P * Kp + I * Ki + D * Kd; // calculate the correction needed to be applied to the speed
 
   //  Serial.print("error: ");
   //  Serial.println(error);

@@ -10,6 +10,8 @@ const int us2E_pn = 12; // yellow wire
 const int us2T_pn = 13; // green wire
 bool flag_nav;
 
+int loop_count = 0;
+
 // reference link: https://create.arduino.cc/projecthub/anova9347/line-follower-robot-with-pid-controller-cdedbd
 
 
@@ -34,7 +36,7 @@ float Kd = 0.0; // related to the derivative control term;
 float P;
 float I;
 float D;
-float distance_tunnel = 7;
+float distance_tunnel = 6;
 
 
 /*************************************************************************
@@ -42,7 +44,7 @@ float distance_tunnel = 7;
  *************************************************************************/
 float lastError = 0;
 float us1_distance;
-float us2_distance;
+float us2_distance = 200;
 
 /*************************************************************************
   Motor speed variables (choose between 0 - no speed, and 255 - maximum speed)
@@ -70,10 +72,20 @@ void setup() {
  *************************************************************************/
 void loop()
 {
+  if (loop_count == 5) {
+    loop_count = 0;
+  }
+  else {
+    loop_count += 1;
+  }
   //  us1_measure();
   //  Serial.print("us1: ");
   //  Serial.println(us1_distance);
+  if (loop_count == 0)
+  {
   us2_measure();
+  }
+  
   Serial.print("us2: ");
   Serial.println(us2_distance);
 
