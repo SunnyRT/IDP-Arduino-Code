@@ -212,7 +212,7 @@ void loop() {
 
         //move backward a little bit for blk collection
         move_backward();
-        delay(500);
+        delay(400);
         stop_move();
         delay(1000);
         blk_collect();
@@ -386,7 +386,7 @@ void turn_90right()
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(FORWARD);
   Lwheel->setSpeed(motor_speed);
-  delay(duration_steer + 100);
+  delay(duration_steer);
 }
 
 void turn_180() {
