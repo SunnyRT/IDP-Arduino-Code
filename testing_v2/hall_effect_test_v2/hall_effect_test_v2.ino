@@ -34,13 +34,13 @@ void loop() {
     if (box_intend == 3) //magnet present
     {
       analogWrite(ledR_pn, 255);
-      delay(5000);
+      delay(1000);
       analogWrite(ledR_pn, 0);
     }
     else //no magnet present
     {
       analogWrite(ledG_pn, 255);
-      delay(5000);
+      delay(1000);
       analogWrite(ledG_pn, 0);
     }
     

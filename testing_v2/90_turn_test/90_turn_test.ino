@@ -8,8 +8,8 @@ const int button_pn = 5;
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
 Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIHGT
 Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
-int motor_speed = 250;
-int duration_steer = 1100; // require testing to determine value
+int motor_speed = 200;
+int duration_steer = 1400; // require testing to determine value
 
 bool flag_onoff = false;
 char flag_nav = 'P';
@@ -56,7 +56,7 @@ void loop() {
     stop_move();
   }
   else {
-    turn_90right();
+    turn_180();
   }
   stop_move();
   flag_onoff = false;
@@ -66,9 +66,9 @@ void turn_90left()
 {
   Rwheel->run(FORWARD);
   Rwheel->setSpeed(motor_speed);
-  Lwheel->run(FORWARD);
+  Lwheel->run(BACKWARD);
   Lwheel->setSpeed(motor_speed);
-  delay(duration_steer);
+  delay(duration_steer -75);
 
 }
 
@@ -78,7 +78,7 @@ void turn_90right()
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(FORWARD);
   Lwheel->setSpeed(motor_speed);
-  delay(1100);
+  delay(duration_steer -25);
 }
 
 void turn_180() {
@@ -86,7 +86,7 @@ void turn_180() {
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(BACKWARD);
   Lwheel->setSpeed(motor_speed);
-  delay(2200); // How long it will turn for!
+  delay(2800); // How long it will turn for!
 
 }
 
