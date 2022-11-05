@@ -109,7 +109,6 @@ void setup() {
   AFMS.begin(); // Connect to the motor controller
   servo_claw.attach(servo1_pn);  // connect to servo
   servo_claw.write(0);
-
 }
 
 void loop() {
@@ -131,14 +130,6 @@ void loop() {
   Serial.print(l1);
   l2 = digitalRead(l2_pn);
   Serial.println(l2);
-
-
-
-  // flags
-  //  Serial.print("Flag_nav: ");
-  //  Serial.println(flag_nav);
-  //  Serial.print("Flag Started: ");
-  //  Serial.println(flag_started);
 
   /** On-off Push Button:*/
   // if the time elapsed is greater than time for debounce:
@@ -570,7 +561,7 @@ void return_home()
     Rwheel->setSpeed(motor_speed);
     Lwheel->run(FORWARD);
     Lwheel->setSpeed(motor_speed);
-    delay(duration_steer -125);
+    delay(duration_steer -100);
   }
   else if (box_intend == 3) {
     Rwheel->run(FORWARD);
@@ -590,23 +581,6 @@ void return_home()
   analogWrite(ledG_pn, 255);
   analogWrite(ledR_pn, 255);
   delay(5000);
-
-  servo_claw.write(10);
-  delay(500);
-  servo_claw.write(0);
-  delay(500);
-  
-  servo_claw.write(10);
-  delay(500);
-  servo_claw.write(0);
-  delay(500);
-
-  servo_claw.write(10);
-  delay(500);
-  servo_claw.write(0);
-  delay(500);
-
-  
   flag_onoff = false; //power off
   digitalWrite(ledA_pn, LOW);
   analogWrite(ledG_pn, 0);
