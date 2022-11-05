@@ -2,6 +2,7 @@
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 #include <Servo.h>
+#include "motion_fns.h"
 
 /* setup the motor and create the DC motor object*/
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
@@ -48,7 +49,7 @@ unsigned long lastTimeButtonStateChanged = 0;
 // time variable
 unsigned long started_time = 0;
 unsigned long return_home_time = 0;
-int return_home_duration = 5600;
+int return_home_duration = 6500;
 
 // PID tunnel navigation variables
 float Kp = 10; // related to the proportional control term;
@@ -87,9 +88,6 @@ int box_intend = 1;
 int box_pass = 0;
 bool flag_box_register;
 
-
-
-
 void setup() {
   Serial.begin(9600);
   // set pins as inputs
@@ -109,8 +107,8 @@ void setup() {
   AFMS.begin(); // Connect to the motor controller
   servo_claw.attach(servo1_pn);  // connect to servo
   servo_claw.write(0);
-
 }
+
 
 void loop() {
   //register loop_count
@@ -131,14 +129,6 @@ void loop() {
   Serial.print(l1);
   l2 = digitalRead(l2_pn);
   Serial.println(l2);
-
-
-
-  // flags
-  //  Serial.print("Flag_nav: ");
-  //  Serial.println(flag_nav);
-  //  Serial.print("Flag Started: ");
-  //  Serial.println(flag_started);
 
   /** On-off Push Button:*/
   // if the time elapsed is greater than time for debounce:
@@ -162,7 +152,7 @@ void loop() {
         flag_onoff = !flag_onoff;
       }
     }
-  }
+  } // close button change
   Serial.print("ONOFF: ");
   Serial.println(flag_onoff);
   if (flag_onoff == false && flag_ledA == true ) {
@@ -171,9 +161,6 @@ void loop() {
   else if (flag_onoff == true && flag_ledA == false) {
     digitalWrite(ledA_pn, HIGH);
   }
-
-  Serial.print("flag_blk: ");
-  Serial.println(flag_blk);
 
 
   /** Navigation */
@@ -210,29 +197,9 @@ void loop() {
         line_follow();
         Serial.println("line");
       }
-      else // the blk has been found!!!!
-      {
-        digitalWrite(ledA_pn, LOW);
-        stop_move();
-        delay(1000);
-
-        //get closer to the blk for magnet detection
-        move_forward();
-        delay(500);
-        stop_move();
-        delay(1000);
-        blk_magnet();
-
-        //move backward a little bit for blk collection
-        move_backward();
-        delay(300);
-        stop_move();
-        delay(1000);
-        blk_LEDindication();
-        blk_collect();
-        digitalWrite(ledA_pn, HIGH);
+      else {
+        blk_find();
       }
-    }
     else // blk has been collected, return route (flag_blk == true)
     {
       Serial.print("flag_tunnel: ");
@@ -313,85 +280,16 @@ void loop() {
         {
           line_follow();
         }
-        else // junction detected! --> return home
+        else // --> return home
         {
-          Serial.println("junction detected!");
           return_home();
         }
       } // blk has been delivered (flag_delivered == true) --> return home
     } // blk has been collected (flag_collected == true)
   } // flag_onoff == true; flag_started == true
-} // loop
+} // loop 
 
-
-
-
-
-
-
-
-
-
-
-
-
-/*========= FUNCTIONS ===================*/
-void line_follow() {
-  if (l2 == LOW) {
-
-    // 000 & it's not already moving forward
-    if ((l0 == LOW && l1 == LOW) && flag_nav != 'F') {
-      move_forward();
-      //      Serial.println("Move Forward");
-    }
-
-    // 100 & not already moving left
-    else if ((l0 == HIGH && l1 == LOW) && flag_nav != 'L') {
-      adjust_left();
-    }
-
-    // 010 & not already moving right
-    else if ((l0 == LOW && l1 == HIGH) && flag_nav != 'R') {
-      adjust_right();
-    }
-  }
-
-  // xx1 or 11x(junction detected)
-  else if (l2 == HIGH || (l0 == HIGH && l1 == HIGH)) {
-    // handle junction depending on flags
-    //    Serial.println("Junction Detected");
-  }
-
-  // catch all other cases: stop & report error
-  else {
-    stop_move();
-    Serial.print("Line Sensor Error: ");
-    Serial.print(l0);
-    Serial.print(l1);
-    Serial.println(l2);
-  }
-}
-
-
-void start_route() {
-  // if still in the box (so no line detected), move forward until edge of box detected
-  if (l0 == LOW && l1 == LOW && l2 == LOW && flag_nav != 'F')
-  {
-    move_forward();
-  }
-  // edge of box detected
-  // maybe change this condition slightly, maybe if all are high?
-  else if ((l0 == HIGH && l1 == HIGH) || l2 == HIGH)
-  {
-    move_forward();
-    delay(duration_start_forward - 100);
-    stop_move();
-    delay(1000);
-    turn_90left();
-    flag_started = true; // exit start_route
-  }
-}
-
+} // close main loop
 
 
 
@@ -422,7 +320,7 @@ void move_backward() {
   Rwheel->run(BACKWARD);
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(BACKWARD);
-  Lwheel->setSpeed(motor_speed + 6);
+  Lwheel->setSpeed(motor_speed);
 
 }
 
@@ -450,7 +348,7 @@ void turn_90left()
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(BACKWARD);
   Lwheel->setSpeed(motor_speed);
-  delay(duration_steer - 75);
+  delay(duration_steer - 100);
 }
 
 void turn_90right()
@@ -459,7 +357,7 @@ void turn_90right()
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(FORWARD);
   Lwheel->setSpeed(motor_speed);
-  delay(duration_steer -25);
+  delay(duration_steer + 50);
 }
 
 void turn_180() {
@@ -467,154 +365,8 @@ void turn_180() {
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(BACKWARD);
   Lwheel->setSpeed(motor_speed);
-  delay(2775); // How long it will turn for!
-  Serial.println("turning 180...");
-
+  delay(duration_steer * 2 - 200); // How long it will turn for!
 }
-
-
-
-
-
-/*********************************************************************************
-   Functions related to blk
- *********************************************************************************/
-void blk_magnet()
-{
-  for (int i = 0; i < 10; i++) //obtain 10 readings from hall effect sensor
-  {
-    delay(100);
-    hall = digitalRead(hall_pn);
-    Serial.println(hall);
-    if (hall == LOW) //magnet is detected when reading is  0
-    {
-      box_intend = 3;
-    }
-  }
-  Serial.println("finish detecting!");
-  Serial.print("box_intend: ");
-  Serial.println(box_intend);
-}
-
-
-void blk_LEDindication()
-{
-  if (box_intend == 3) //magnet present
-  {
-    analogWrite(ledR_pn, 255);
-    delay(5000);
-    analogWrite(ledR_pn, 0);
-  }
-  else //no magnet present
-  {
-    analogWrite(ledG_pn, 255);
-    delay(5000);
-    analogWrite(ledG_pn, 0);
-  }
-}
-
-void blk_collect()
-{
-  // rotate claw to trap the blk
-  servo_claw.write(45);
-  delay(1000);
-  turn_180();
-  Serial.println("finish turning!");
-  stop_move();
-  delay(1000);
-  flag_blk = true;
-}
-
-
-void blk_delivery()
-{
-  stop_move();
-  delay(1000);
-  turn_90right();
-  stop_move();
-  delay(1000);
-  move_forward();
-  delay(duration_start_forward);
-  stop_move();
-  delay(1000);
-  servo_claw.write(0);
-  delay(1000);
-  flag_delivered = true;
-}
-
-void blk_retriet()
-{
-  move_backward();
-  delay(1200);
-  stop_move();
-  delay(1000);
-  if (box_intend == 1) {
-    turn_90left();
-  }
-  else if (box_intend == 3) {
-    turn_90right();
-  }
-  stop_move();
-  delay(1000);
-  move_forward();
-  delay(200);
-}
-
-void return_home()
-{
-  stop_move();
-  delay(1000);
-  if (box_intend == 1) {
-    turn_90right();
-  }
-  else if (box_intend == 3) {
-    turn_90left();
-  }
-  stop_move();
-  delay(1000);
-  move_forward();
-  delay(2.5 * duration_start_forward);
-  stop_move();
-  delay(1000);
-  flag_onoff = false; //power off
-  digitalWrite(ledA_pn, LOW);
-}
-
-
-
-
-/*********************************************************************************
-   Functions related to ultrasonic sensor readings
- *********************************************************************************/
-
-void us1_measure()
-{
-  digitalWrite(us1T_pn, LOW);
-  delayMicroseconds(1);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(us1T_pn, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(us1T_pn, LOW);
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  float us1_duration = pulseIn(us1E_pn, HIGH);
-  // get distance values(*v_sound /2)
-  us1_distance = us1_duration * 0.017;
-}
-
-void us2_measure()
-{
-  digitalWrite(us2T_pn, LOW);
-  delayMicroseconds(1);
-  // Sets the trigPin HIGH (ACTIVE) for 10 microseconds
-  digitalWrite(us2T_pn, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(us2T_pn, LOW);
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  float us2_duration = pulseIn(us2E_pn, HIGH);
-  // get distance values(*v_sound /2)
-  us2_distance = us2_duration * 0.017;
-}
-
 
 void tunnel_PID_control(float distance_wall)
 {
@@ -648,8 +400,7 @@ void tunnel_PID_control(float distance_wall)
   {
     motorspeedL = 0;
   }
-
-  flag_nav = 'F';
+    flag_nav = 'F';
   Rwheel->run(FORWARD);
   Rwheel->setSpeed(motorspeedR);
   //  Serial.print("speedR: ");

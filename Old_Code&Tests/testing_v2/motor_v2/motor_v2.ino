@@ -15,7 +15,7 @@ void setup() {
   Rwheel->run(FORWARD);
   Rwheel->setSpeed(motor_speed);
   Lwheel->run(FORWARD);
-  Lwheel->setSpeed(motor_speed + 5);
+  Lwheel->setSpeed(motor_speed+6);
 }
 
 void loop() {

@@ -88,8 +88,6 @@ bool flag_tunnel; // true if in tunnel, false if not
 int box_intend = 1;
 
 
-
-
 void setup() {
   Serial.begin(9600);
   // set pins as inputs
@@ -109,9 +107,8 @@ void setup() {
   AFMS.begin(); // Connect to the motor controller
   servo_claw.attach(servo1_pn);  // connect to servo
   servo_claw.write(0);
-
 }
-
+/** MAIN LOOP- Start =====================================================================*/
 void loop() {
   //register loop_count
   if (loop_count == 5) {
@@ -131,8 +128,6 @@ void loop() {
   Serial.print(l1);
   l2 = digitalRead(l2_pn);
   Serial.println(l2);
-
-
 
   // flags
   Serial.print("Flag_nav: ");
@@ -195,6 +190,7 @@ void loop() {
         //      Serial.println(us2_distance);
       }
       if (us1_distance > 10.0) {
+        // if front distance is further than 10cm from obstacle
         line_follow();
         Serial.println("line");
       }
@@ -249,20 +245,10 @@ void loop() {
     }
   }
 }
+/** MAIN LOOP- End =====================================================================*/
 
 
-
-
-
-
-
-
-
-
-
-
-
-/*========= FUNCTIONS ===================*/
+/** Navigation FUNCTIONS ================================================================*/
 void line_follow() {
   if (l2 == LOW) {
 
@@ -319,12 +305,6 @@ void start_route() {
   }
 }
 
-
-
-
-/*********************************************************************************
-   Functions related to navigation
- *********************************************************************************/
 
 void stop_move() {
   flag_nav = 'P';
@@ -399,21 +379,18 @@ void turn_180() {
 }
 
 
-
-
-
 /*********************************************************************************
    Functions related to blk
  *********************************************************************************/
 void blk_magnet()
 {
   for (int i = 0; i < 10; i++) //obtain 10 readings from hall effect sensor
-  {
+  { // if any of the readings are HIGH, it's a magnet
+    // necessary, as the readings are not consistently 1
     delay(100);
     hall = digitalRead(hall_pn);
     Serial.println(hall);
-    if (hall == HIGH)
-    {
+    if (hall == HIGH){
       box_intend = 3;
     }
   }

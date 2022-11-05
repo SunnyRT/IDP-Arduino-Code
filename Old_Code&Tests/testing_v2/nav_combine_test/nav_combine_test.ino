@@ -187,7 +187,7 @@ void loop() {
         //      Serial.print("us2: ");
         //      Serial.println(us2_distance);
       }
-      if (us1_distance > 10.0) {
+      if (us1_distance > 8.0) {
         line_follow();
         Serial.println("line");
       }
