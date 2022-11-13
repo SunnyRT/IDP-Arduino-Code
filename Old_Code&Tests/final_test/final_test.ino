@@ -5,10 +5,10 @@
 
 /* setup the motor and create the DC motor object*/
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); // Create the Adafruit_MotorShield object
-Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIHGT
+Adafruit_DCMotor *Rwheel = AFMS.getMotor(1);        // RIGHT
 Adafruit_DCMotor *Lwheel = AFMS.getMotor(2);        // LEFT
 int motor_speed = 200;
-int duration_steer = 1400; // require testing to determine value
+int duration_steer = 1400; // time for which turning occurs
 int duration_start_forward = 1400;
 Servo servo_claw;
 
@@ -61,38 +61,34 @@ const float maxspeedL = 200.0;
 const float basespeedR = 150.0;
 const float basespeedL = 150.0;
 
-
-/*************
-   flags
-**************/
 bool flag_onoff = false; // push button: robot on or off
-bool flag_ledA = false;
+bool flag_ledA = false;  // whether amber LED should be flashing or not
 bool flag_started;       // has robot completed initial start?
-char flag_nav = 'P';
+char flag_nav = 'P';     // initialise to stopped
 //"P": stop
 //"L": adjust left
 //"R": adjust right
 //"B": backwards
 //"F": forwards
 bool flag_blk = false; // block collected
-bool flag_delivered = false;
-int flag_tunnel = 0; // this flag is only for the returning through tunnel
+bool flag_delivered = false; // true when block has been deposited in a box
+int flag_tunnel = 0; //
 /*
    0: before the tunnel --> us2 reading every 5 loops
    1: within the tunnel --> us2 reading every loops
    2: after the tunnel --> no us2 reading
+   this allowed us to not have to read the ultrasonic sensor more than necessary,
+   as it did slow the loop down
 */
-
 int box_intend = 1;
 int box_pass = 0;
 bool flag_box_register;
 
 
 
-
 void setup() {
   Serial.begin(9600);
-  // set pins as inputs
+  // set pins as inputs: see start_up.h file for pin numbers
   pinMode(button_pn, INPUT);
   pinMode(hall_pn, INPUT);
   pinMode(l0_pn, INPUT);
@@ -112,17 +108,18 @@ void setup() {
 }
 
 void loop() {
-  //register loop_count
+  //register loop_count: used so that the ultrasonic is only measured every 5 loops
   if (loop_count == 5) {
     loop_count = 0;
   }
   else {
     loop_count += 1;
   }
-  //  Serial.print("loop count: ");
-  //  Serial.println (loop_count);
 
-  /*read & print line sensors*/
+
+  /** read & print line sensors
+   * - this was used regularly for debugging issues with navigation & steering
+  */
   Serial.print("Line Sensors: ");
   l0 = digitalRead(l0_pn);
   Serial.print(l0);
@@ -388,7 +385,7 @@ void start_route() {
 
 
 /*********************************************************************************
-   Functions related to navigation
+   Functions
  *********************************************************************************/
 
 void stop_move() {
