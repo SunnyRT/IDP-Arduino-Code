@@ -76,9 +76,9 @@ void loop(){
                 block_found();
             }
         }
-    /** Return Jouney: */
-    else // blk has been collected, return route (flag_blk == true)
-    {
+      /** Return Jouney: */
+      else // blk has been collected, return route (flag_blk == true)
+      {
         if (flag_delivered == false) //blk has yet to be delivered
         {
             /** before tunnel*/
@@ -201,10 +201,10 @@ void start_route() {
   {
     move_forward();
   }
-  // edge of box detected
-  // maybe change this condition slightly, maybe if all are high?
+  // if edge of box detected:
   else if ((l0 == HIGH && l1 == HIGH) || l2 == HIGH)
   {
+    // exit box and turn left onto the line
     move_forward();
     delay(duration_start_forward - 100);
     stop_move();
@@ -347,7 +347,9 @@ void tunnel_P_control(float distance_wall)
     
     float motorspeedR = basespeedR - motorspeed;
     float motorspeedL = basespeedL + motorspeed;
-
+    /* these if statements are to handle the cases when the desired 
+    motorspeed calculated is greater than the max motorspeed, and the 
+    same for if it is lower than 0 */
     if (motorspeedR > maxspeedR)
     {
         motorspeedR = maxspeedR;
